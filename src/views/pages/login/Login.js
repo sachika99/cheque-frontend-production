@@ -37,7 +37,7 @@ const Login = () => {
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          backgroundColor: 'rgba(0, 0, 0, 0.3)',
           zIndex: 0,
         }}
       ></div>
