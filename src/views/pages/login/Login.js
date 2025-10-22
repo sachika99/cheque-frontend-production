@@ -109,7 +109,7 @@ const Login = () => {
                     <Link
                       to="#"
                       className="text-decoration-none"
-                      style={{ color: '#ff6a00', fontSize: '0.9rem' }}
+                      style={{ color: '#ff0040ff', fontSize: '0.9rem' }}
                     >
                       Lost your password?
                     </Link>
@@ -118,7 +118,7 @@ const Login = () => {
                   <CButton
                     className="w-100 py-2 fw-semibold border-0 mb-3"
                     style={{
-                      backgroundColor: '#ff6a00',
+                      backgroundColor: '#ff0040ff',
                       color: '#fff',
                       fontSize: '1rem',
                       transition: 'background 0.3s',
@@ -127,7 +127,7 @@ const Login = () => {
                       (e.currentTarget.style.backgroundColor = '#e85d00')
                     }
                     onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = '#ff6a00')
+                      (e.currentTarget.style.backgroundColor = '#ff0040ff')
                     }
                     onClick={handleLogin}
                   >
@@ -142,7 +142,7 @@ const Login = () => {
                     <Link
                       to="#"
                       className="text-decoration-none"
-                      style={{ color: '#ff6a00' }}
+                      style={{ color: '#ff0040ff' }}
                     >
                       Terms of Service
                     </Link>{' '}
@@ -150,7 +150,7 @@ const Login = () => {
                     <Link
                       to="#"
                       className="text-decoration-none"
-                      style={{ color: '#ff6a00' }}
+                      style={{ color: '#ff0040ff' }}
                     >
                       Privacy Policy
                     </Link>
