@@ -27,7 +27,7 @@ const Login = () => {
     <div
       className="min-vh-100 d-flex align-items-center justify-content-center position-relative"
       style={{
-        backgroundImage: "url('/nature-3082832_1280.jpg')",
+        backgroundImage: "url('/vecteezy_beautiful-forest-panoramic-realistic-neon-vector-vivid_10527170.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -37,7 +37,7 @@ const Login = () => {
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          backgroundColor: 'rgba(0, 0, 0, 0.0)',
           zIndex: 0,
         }}
       ></div>
