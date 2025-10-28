@@ -55,6 +55,10 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
+// Vendors
+const VendorList = React.lazy(() => import('./views/chequeSystem/VendorList'))
+const VendorForm = React.lazy(() => import('./views/chequeSystem/VendorForm'))
+
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
@@ -102,6 +106,10 @@ const routes = [
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
   { path: '/tables/maintable', name: 'MainTable', element: MainTable },
+  // Vendors
+  { path: '/vendors', name: 'Vendors', element: VendorList, exact: true },
+  { path: '/vendors/create', name: 'Create Vendor', element: VendorForm },
+  { path: '/vendors/edit/:id', name: 'Edit Vendor', element: VendorForm },
 ]
 
 export default routes

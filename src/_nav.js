@@ -56,11 +56,10 @@ const _nav = [
         icon: <CIcon icon={cilSwapHorizontal} customClassName="nav-icon" />
   },
   {
-        component: CNavItem,
-        name: 'Vendors',
-        to: '/tables/maintable',
-        icon: <CIcon icon={cilFactory} customClassName="nav-icon" />
-        
+    component: CNavItem,
+    name: 'Vendors',
+    to: '/vendors',
+    icon: <CIcon icon={cilFactory} customClassName="nav-icon" />
   },
   {
     component: CNavTitle,
