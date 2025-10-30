@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   CButton,
@@ -11,28 +11,53 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
+  CAlert,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
+import authService from '../../../api/authservices/authService'
+import ForgotPasswordModal from '../forgotPassword/ForgotPasswordModal'
 
 const Login = () => {
+  const [showForgotModal, setShowForgotModal] = useState(false)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+
   const navigate = useNavigate()
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    try {
+      setErrorMessage('')
+      setSuccessMessage('')
 
-    navigate('/dashboard')
+      const response = await authService().login(username, password)
+      if (response?.data && response?.status === 200) {
+        localStorage.setItem('accessToken', response.data.accessToken)
+        localStorage.setItem('email', response.data.email)
+        localStorage.setItem('username', response.data.username)
+        navigate('/dashboard')
+      } else {
+        setErrorMessage('Login failed. Please try again.')
+      }
+    } catch (error) {
+      setErrorMessage(error?.response?.data || 'An error occurred during login. Please try again.')
+      console.warn('Error during login:', error)
+    }
   }
 
   return (
     <div
       className="min-vh-100 d-flex align-items-center justify-content-center position-relative"
       style={{
-        backgroundImage: "url('/vecteezy_beautiful-forest-panoramic-realistic-neon-vector-vivid_10527170.jpg')",
+        backgroundImage: "url('/pxfuel.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }}
     >
+      {/* Background overlay */}
       <div
         style={{
           position: 'absolute',
@@ -48,22 +73,43 @@ const Login = () => {
             <CCard
               className="border-0 shadow-lg p-4"
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                backgroundColor: 'var(--cui-card-bg)',
                 borderRadius: '12px',
                 backdropFilter: 'blur(6px)',
               }}
             >
               <CCardBody>
                 <div className="text-center mb-4">
-                  <h2 className="fw-bold" style={{ color: '#0f172a' }}>
-                    Welcome Back
-                  </h2>
+                  <h2 className="fw-bold text-body">Welcome Back</h2>
                   <p className="text-muted" style={{ fontSize: '0.9rem' }}>
                     Sign in to continue to <span className="fw-semibold">JANASIRI MOTORS</span>
                   </p>
                 </div>
 
+                {successMessage && (
+                  <CAlert
+                    color="success"
+                    className="mb-3 py-2 px-3"
+                    dismissible
+                    style={{ fontSize: '0.875rem', borderRadius: '6px' }}
+                  >
+                    {successMessage}
+                  </CAlert>
+                )}
+
+                {errorMessage && (
+                  <CAlert
+                    color="danger"
+                    className="mb-3 py-2 px-3"
+                    dismissible
+                    style={{ fontSize: '0.875rem', borderRadius: '6px' }}
+                  >
+                    {errorMessage}
+                  </CAlert>
+                )}
+
                 <CForm>
+                  {/* Username */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold text-muted">Email Address</label>
                     <CInputGroup>
@@ -71,13 +117,15 @@ const Login = () => {
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
                       <CFormInput
-                        type="text"
                         placeholder="Enter your username"
                         autoComplete="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                       />
                     </CInputGroup>
                   </div>
 
+                  {/* Password */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold text-muted">Password</label>
                     <CInputGroup>
@@ -88,46 +136,55 @@ const Login = () => {
                         type="password"
                         placeholder="Enter your password"
                         autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                       />
                     </CInputGroup>
                   </div>
 
+                  {/* Remember + Forgot Password */}
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="rememberMe"
-                      />
-                      <label
-                        className="form-check-label text-muted"
-                        htmlFor="rememberMe"
-                      >
+                      <input className="form-check-input" type="checkbox" id="rememberMe" />
+                      <label className="form-check-label text-muted" htmlFor="rememberMe">
                         Remember Me
                       </label>
                     </div>
                     <Link
                       to="#"
-                      className="text-decoration-none"
-                      style={{ color: '#ff0040ff', fontSize: '0.9rem' }}
+                      className="text-decoration-none fw-semibold"
+                      style={{
+                        color: 'inherit',
+                        textAlign: 'center',
+                        display: 'block',
+                        fontSize: '1rem',
+                        transition: 'color 0.2s',
+                      }}
+                      onMouseEnter={(e) => (e.target.style.color = '#0d6efd')}
+                      onMouseLeave={(e) => (e.target.style.color = 'inherit')}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setShowForgotModal(true)
+                      }}
                     >
-                      Lost your password?
+                      Forgot password?
                     </Link>
                   </div>
 
+                  {/* Sign In Button */}
                   <CButton
                     className="w-100 py-2 fw-semibold border-0 mb-3"
                     style={{
-                      backgroundColor: '#ff0040ff',
-                      color: '#fff',
+                      backgroundColor: 'var(--cui-primary)',
+                      color: 'var(--cui-primary-color)',
                       fontSize: '1rem',
                       transition: 'background 0.3s',
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = '#e85d00')
+                      (e.currentTarget.style.backgroundColor = 'var(--cui-primary-dark)')
                     }
                     onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = '#ff0040ff')
+                      (e.currentTarget.style.backgroundColor = 'var(--cui-primary)')
                     }
                     onClick={handleLogin}
                   >
@@ -136,23 +193,15 @@ const Login = () => {
 
                   <p
                     className="text-center text-muted small mt-3"
-                    style={{ lineHeight: '1.5' }}
+                    style={{ lineHeight: '1.6', fontSize: '0.9rem' }}
                   >
-                    By clicking on <strong>“Sign in now”</strong> you agree to our{' '}
+                    Don't have an account?{' '}
                     <Link
-                      to="#"
-                      className="text-decoration-none"
-                      style={{ color: '#ff0040ff' }}
+                      to="/register"
+                      className="text-decoration-none fw-semibold"
+                      style={{ color: 'var(--cui-link-color)' }}
                     >
-                      Terms of Service
-                    </Link>{' '}
-                    &amp;{' '}
-                    <Link
-                      to="#"
-                      className="text-decoration-none"
-                      style={{ color: '#ff0040ff' }}
-                    >
-                      Privacy Policy
+                      Register now
                     </Link>
                     .
                   </p>
@@ -162,6 +211,14 @@ const Login = () => {
           </CCol>
         </CRow>
       </CContainer>
+
+      <ForgotPasswordModal
+        visible={showForgotModal}
+        onClose={() => setShowForgotModal(false)}
+        onSuccess={() =>
+          setSuccessMessage('Password reset successful! Please login with your new password.')
+        }
+      />
     </div>
   )
 }
