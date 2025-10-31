@@ -16,8 +16,10 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import authService from '../../../api/authservices/authService'
+import EmailVerificationModal from '../emailVerify/EmailVerificationModal'
 
 const Register = () => {
+  const [showForgotModal, setShowForgotModal] = useState(false)
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -36,18 +38,21 @@ const Register = () => {
         setErrorMessage('Passwords do not match!')
         return
       }
-      debugger
-      const response = await authService().register(email, username, password);
-      if (response?.data) {
-        setSuccessMessage('Account created successfully! Redirecting to login...')
-        setTimeout(() => {
-          navigate('/login')
-        }, 2000)
-      }
+     setShowForgotModal(true)
     } catch (error) {
       console.warn("Error registering user:", error);
       setErrorMessage('Registration failed. Please try again.')
     }
+  };
+  const clear = () => {
+    setEmail('')
+    setUsername('')
+    setPassword('')
+    setConfirmPassword('')
+    setSuccessMessage('user created successful! Congradulations wellcome to janasiri')
+    setTimeout(() => {
+          navigate('/login')
+        }, 1000)
   };
 
   return (
@@ -200,6 +205,21 @@ const Register = () => {
           </CCol>
         </CRow>
       </CContainer>
+       <EmailVerificationModal
+        visible={showForgotModal}
+        onClose={() => setShowForgotModal(false)}
+        onSuccess={() =>clear()}
+        onError={(msg) => {
+          setShowForgotModal(false);
+          setErrorMessage(msg);
+        }}
+
+         email={email}
+         username={username}
+         password={password}
+
+
+      />
     </div>
   )
 }

@@ -80,7 +80,19 @@ const authService = () => {
       throw error;
     }
   };
- 
+ const verifyEmail = async (email) => {
+    try {
+       const response = await axios.post(
+      `${API_CONFIGURATIONS.VERIFY_EMAIL}?email=${encodeURIComponent(email)}`,
+      null,
+      { headers: { "Content-Type": "application/json" } }
+    );
+      
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
   // const validManager = async (username, password) => {
   //   try {
   //     const response = await axios.post(
@@ -137,7 +149,7 @@ const authService = () => {
 
   // };
 
-  return { register,login,forgotPassword,resetPassword,logout};
+  return { register,login,forgotPassword,resetPassword,logout,verifyEmail};
 };
 
 export default authService;

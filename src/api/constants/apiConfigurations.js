@@ -6,4 +6,5 @@ export const API_CONFIGURATIONS = {
     FORGOT_PASSWORD_USER: `${BASE_URL}/forgot-password`,
     RESET_PASSWORD_USER: `${BASE_URL}/reset-password`,
     LOGOUT_USER: `${BASE_URL}/logout`,
+    VERIFY_EMAIL: `${BASE_URL}/verify-email`,
 };
