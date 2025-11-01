@@ -1,4 +1,5 @@
 import React from 'react'
+import { Navigate } from 'react-router-dom'
 // import MainTable from './components/pages/MainTable'
 
 
@@ -58,10 +59,15 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 // Vendors
 const VendorList = React.lazy(() => import('./views/chequeSystem/VendorList'))
 const VendorForm = React.lazy(() => import('./views/chequeSystem/VendorForm'))
+const ProtectedRoute = ({ element: Element }) => {
+  const isLoggedIn = localStorage.getItem('accessToken')
+  return isLoggedIn ? <Element /> : <Navigate to="/login" replace />
+}
+
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  { path: '/dashboard', name: 'Dashboard', element: () => <ProtectedRoute element={Dashboard} /> },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
