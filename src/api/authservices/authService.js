@@ -5,7 +5,7 @@ const authService = () => {
   const register = async (email, username, password) => {
     try {
       const response = await axios.post(
-        API_CONFIGURATIONS.REGISTER_USER,
+        API_CONFIGURATIONS.ENDPOINTS.REGISTER_USER,
 
         { email: email,
           username: username,
@@ -21,7 +21,7 @@ const authService = () => {
  const login = async (username, password) => {
     try {
       const response = await axios.post(
-        API_CONFIGURATIONS.LOGIN_USER,
+        API_CONFIGURATIONS.ENDPOINTS.LOGIN_USER,
 
         { 
           username: username,
@@ -37,8 +37,8 @@ const authService = () => {
  const forgotPassword = async (email) => {
   try {
     const response = await axios.post(
-      `${API_CONFIGURATIONS.FORGOT_PASSWORD_USER}?email=${encodeURIComponent(email)}`,
-      null, // 👈 no request body
+      `${API_CONFIGURATIONS.ENDPOINTS.FORGOT_PASSWORD_USER}?email=${encodeURIComponent(email)}`,
+      null, 
       { headers: { "Content-Type": "application/json" } }
     );
     return response;
@@ -50,7 +50,7 @@ const authService = () => {
 // debugger
     try { 
       const response = await axios.post(
-        API_CONFIGURATIONS.RESET_PASSWORD_USER,
+        API_CONFIGURATIONS.ENDPOINTS.RESET_PASSWORD_USER,
 
         { email: email,
           token: token,
@@ -67,7 +67,7 @@ const authService = () => {
    const logout = async (email, username, password) => {
     try {
       const response = await axios.post(
-        API_CONFIGURATIONS.REGISTER_USER,
+        API_CONFIGURATIONS.ENDPOINTS.REGISTER_USER,
 
         { email: email,
           username: username,
@@ -83,7 +83,7 @@ const authService = () => {
  const verifyEmail = async (email) => {
     try {
        const response = await axios.post(
-      `${API_CONFIGURATIONS.VERIFY_EMAIL}?email=${encodeURIComponent(email)}`,
+      `${API_CONFIGURATIONS.ENDPOINTS.VERIFY_EMAIL}?email=${encodeURIComponent(email)}`,
       null,
       { headers: { "Content-Type": "application/json" } }
     );
