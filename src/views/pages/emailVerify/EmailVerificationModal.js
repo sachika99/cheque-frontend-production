@@ -31,7 +31,6 @@ const EmailVerificationModal = ({ visible, onClose, onSuccess, onError,email, us
         setForgotStep(1)
       }
     } catch (error) {
-      debugger
       console.warn('Error verifying email:', error)
       onError?.(error?.response?.data)
     } finally {

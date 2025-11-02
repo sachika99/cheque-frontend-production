@@ -189,30 +189,29 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
               Enter Verification Code
             </label>
 
-            <CFormInput
-              type="text"
-              placeholder="0 0 0 0"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value.replace(/[^0-9]/g, ''))}
-              maxLength={4}
-              className="mx-auto text-center"
-              style={{
-                width: '220px',
-                fontSize: '1.8rem',
-                letterSpacing: '0.6rem',
-                fontWeight: '700',
-                border: '2px solid var(--cui-link-color, #0d6efd)',
-                borderRadius: '10px',
-                padding: '12px 0',
-                outline: 'none',
-                color: 'var(--cui-text-color, #212529)',
-                backgroundColor: 'var(--cui-body-bg, #fff)',
-                boxShadow: '0 2px 8px rgba(13,110,253,0.15)',
-                transition: 'all 0.2s ease-in-out',
-              }}
-              onFocus={(e) => (e.target.style.boxShadow = '0 0 10px rgba(13,110,253,0.4)')}
-              onBlur={(e) => (e.target.style.boxShadow = '0 2px 8px rgba(13,110,253,0.15)')}
-            />
+           <CFormInput
+                          type="text"
+                          placeholder="0 0 0 0"
+                          value={verificationCode}
+                          onChange={(e) => setVerificationCode(e.target.value.replace(/[^0-9]/g, ''))}
+                          maxLength={4}
+                          className="mx-auto text-center"
+                          style={{
+                            width: '220px',
+                            fontSize: '1.8rem',
+                            letterSpacing: '0.6rem',
+                            fontWeight: '700',
+                            border: '2px solid #0d6efd',
+                            borderRadius: '10px',
+                            padding: '12px 0',
+                            color: '#fff',
+                            backgroundColor: '#0d1117',
+                            boxShadow: '0 2px 8px rgba(13,110,253,0.3)',
+                            transition: 'all 0.2s ease-in-out',
+                          }}
+                          onFocus={(e) => (e.target.style.boxShadow = '0 0 10px rgba(13,110,253,0.4)')}
+                          onBlur={(e) => (e.target.style.boxShadow = '0 2px 8px rgba(13,110,253,0.3)')}
+                        />
 
 
             <div className="text-center mt-4">

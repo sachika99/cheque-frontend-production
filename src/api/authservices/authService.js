@@ -1,5 +1,6 @@
-import axios from "axios";
-import { API_CONFIGURATIONS } from "../constants/apiConfigurations";
+import axios from 'axios'
+import { API_CONFIGURATIONS } from '../constants/apiConfigurations'
+import { decryptOtp } from '../../utils/crypto'
 
 const authService = () => {
   const register = async (email, username, password) => {
@@ -7,92 +8,108 @@ const authService = () => {
       const response = await axios.post(
         API_CONFIGURATIONS.ENDPOINTS.REGISTER_USER,
 
-        { email: email,
-          username: username,
-          password: password },
-        { headers: { "Content-Type": "application/json" } }
-      );
-      
-      return response;
+        { email: email, username: username, password: password },
+        { headers: { 'Content-Type': 'application/json' } },
+      )
+
+      return response
     } catch (error) {
-      throw error;
+      throw error
     }
-  };
- const login = async (username, password) => {
+  }
+  const login = async (username, password) => {
     try {
       const response = await axios.post(
         API_CONFIGURATIONS.ENDPOINTS.LOGIN_USER,
 
-        { 
+        {
           username: username,
-          password: password },
-        { headers: { "Content-Type": "application/json" } }
-      );
-      
-      return response;
+          password: password,
+        },
+        { headers: { 'Content-Type': 'application/json' } },
+      )
+
+      return response
     } catch (error) {
-      throw error;
+      throw error
     }
-  };
- const forgotPassword = async (email) => {
-  try {
-    const response = await axios.post(
-      `${API_CONFIGURATIONS.ENDPOINTS.FORGOT_PASSWORD_USER}?email=${encodeURIComponent(email)}`,
-      null, 
-      { headers: { "Content-Type": "application/json" } }
-    );
-    return response;
-  } catch (error) {
-    throw error;
   }
-};
-   const resetPassword = async (email, token, newPassword) => {
-// debugger
-    try { 
+  const forgotPassword = async (email) => {
+    try {
+      const response = await axios.post(
+        `${API_CONFIGURATIONS.ENDPOINTS.FORGOT_PASSWORD_USER}?email=${encodeURIComponent(email)}`,
+        null,
+        { headers: { 'Content-Type': 'application/json' } },
+      )
+      if (response?.data) {
+        const data = response.data
+        const encryptedOtp = data.otp
+        const decryptedOtp = encryptedOtp ? decryptOtp(encryptedOtp) : ''
+        return {
+          data: {
+            ...data,
+            otp: decryptedOtp,
+          },
+           status:response.status
+        }
+      }
+    } catch (error) {
+      throw error
+    }
+  }
+  const resetPassword = async (email, token, newPassword) => {
+    // debugger
+    try {
       const response = await axios.post(
         API_CONFIGURATIONS.ENDPOINTS.RESET_PASSWORD_USER,
 
-        { email: email,
-          token: token,
-          newPassword: newPassword },
-        { headers: { "Content-Type": "application/json" } }
-      );
+        { email: email, token: token, newPassword: newPassword },
+        { headers: { 'Content-Type': 'application/json' } },
+      )
       // debugger
-      return response;
+      return response
     } catch (error) {
-      throw error;
+      throw error
     }
-  };
+  }
 
-   const logout = async (email, username, password) => {
+  const logout = async (email, username, password) => {
     try {
       const response = await axios.post(
         API_CONFIGURATIONS.ENDPOINTS.REGISTER_USER,
 
-        { email: email,
-          username: username,
-          password: password },
-        { headers: { "Content-Type": "application/json" } }
-      );
-      
-      return response;
+        { email: email, username: username, password: password },
+        { headers: { 'Content-Type': 'application/json' } },
+      )
+
+      return response
     } catch (error) {
-      throw error;
+      throw error
     }
-  };
- const verifyEmail = async (email) => {
+  }
+  const verifyEmail = async (email) => {
     try {
-       const response = await axios.post(
-      `${API_CONFIGURATIONS.ENDPOINTS.VERIFY_EMAIL}?email=${encodeURIComponent(email)}`,
-      null,
-      { headers: { "Content-Type": "application/json" } }
-    );
-      
-      return response;
+      const response = await axios.post(
+        `${API_CONFIGURATIONS.ENDPOINTS.VERIFY_EMAIL}?email=${encodeURIComponent(email)}`,
+        null,
+        { headers: { 'Content-Type': 'application/json' } },
+      )
+      if (response?.data) {
+        const data = response.data
+        const encryptedOtp = data.otp
+        const decryptedOtp = encryptedOtp ? decryptOtp(encryptedOtp) : ''
+        return {
+          data: {
+            ...data,
+            otp: decryptedOtp,
+          },
+            status:response.status
+        }
+      }
     } catch (error) {
-      throw error;
+      throw error
     }
-  };
+  }
   // const validManager = async (username, password) => {
   //   try {
   //     const response = await axios.post(
@@ -149,7 +166,7 @@ const authService = () => {
 
   // };
 
-  return { register,login,forgotPassword,resetPassword,logout,verifyEmail};
-};
+  return { register, login, forgotPassword, resetPassword, logout, verifyEmail }
+}
 
-export default authService;
+export default authService
