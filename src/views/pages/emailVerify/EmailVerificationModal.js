@@ -12,7 +12,15 @@ import {
 } from '@coreui/react'
 import authService from '../../../api/authservices/authService'
 
-const EmailVerificationModal = ({ visible, onClose, onSuccess, onError,email, username, password }) => {
+const EmailVerificationModal = ({
+  visible,
+  onClose,
+  onSuccess,
+  onError,
+  email,
+  username,
+  password,
+}) => {
   const [forgotStep, setForgotStep] = useState(0)
   const [verificationCode, setVerificationCode] = useState('')
   const [otp, setOTP] = useState('')
@@ -29,10 +37,12 @@ const EmailVerificationModal = ({ visible, onClose, onSuccess, onError,email, us
       if (emailResponse?.data) {
         setOTP(emailResponse.data.otp)
         setForgotStep(1)
+      } else {
+        onError?.(emailResponse)
       }
     } catch (error) {
       console.warn('Error verifying email:', error)
-      onError?.(error?.response?.data)
+      onError?.(error?.response?.data || response)
     } finally {
       setIsLoading(false)
     }
@@ -48,9 +58,11 @@ const EmailVerificationModal = ({ visible, onClose, onSuccess, onError,email, us
         if (response?.data) {
           onClose()
           onSuccess?.()
+        } else {
+          onError?.(response)
         }
       } catch (error) {
-        setOtpErrorMessage('Registration failed. Please try again later.')
+        onError?.(error?.response?.data || response)
       } finally {
         setIsFloatingLoading(false)
       }
@@ -98,9 +110,7 @@ const EmailVerificationModal = ({ visible, onClose, onSuccess, onError,email, us
         className="fade-in"
       >
         <CModalHeader className="border-bottom pb-2">
-          <CModalTitle className="fw-bold fs-5">
-            Email Verification
-          </CModalTitle>
+          <CModalTitle className="fw-bold fs-5">Email Verification</CModalTitle>
         </CModalHeader>
 
         <CModalBody className="px-5 py-4">
@@ -127,7 +137,11 @@ const EmailVerificationModal = ({ visible, onClose, onSuccess, onError,email, us
 
           {forgotStep === 0 && isLoading && (
             <div className="text-center py-5">
-              <CSpinner color="primary" style={{ width: '3rem', height: '3rem' }} className="mb-4" />
+              <CSpinner
+                color="primary"
+                style={{ width: '3rem', height: '3rem' }}
+                className="mb-4"
+              />
               <h5 className="fw-semibold mb-2">Sending Verification Code</h5>
               <p className="text-muted mb-0">
                 Please wait while we send an OTP to your email address...

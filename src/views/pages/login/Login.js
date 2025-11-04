@@ -12,6 +12,7 @@ import {
   CInputGroupText,
   CRow,
   CAlert,
+  CSpinner,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
@@ -24,6 +25,7 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [isFloatingLoading, setIsFloatingLoading] = useState(false)
 
   const navigate = useNavigate()
 
@@ -31,19 +33,22 @@ const Login = () => {
     try {
       setErrorMessage('')
       setSuccessMessage('')
-
+      setIsFloatingLoading(true)
       const response = await authService().login(username, password)
       if (response?.data && response?.status === 200) {
         localStorage.setItem('accessToken', response.data.accessToken)
         localStorage.setItem('email', response.data.email)
         localStorage.setItem('username', response.data.username)
+        setIsFloatingLoading(false)
         navigate('/dashboard')
       } else {
-        setErrorMessage('Login failed. Please try again.')
+        setIsFloatingLoading(false)
+        setErrorMessage(response)
       }
     } catch (error) {
-      setErrorMessage(error?.response?.data || 'An error occurred during login. Please try again.')
-      console.warn('Error during login:', error)
+      setIsFloatingLoading(false)
+      setErrorMessage(error?.response?.data || response)
+      console.warn('Error during login:', error || response)
     }
   }
 
@@ -57,7 +62,49 @@ const Login = () => {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* Background overlay */}
+      {isFloatingLoading && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            height: '100vh',
+            width: '100vw',
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            zIndex: 2000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backdropFilter: 'blur(2px)',
+            transition: 'all 0.3s ease-in-out',
+          }}
+        >
+          <div className="text-center">
+            <CSpinner
+              style={{
+                width: '4rem',
+                height: '4rem',
+                borderWidth: '4px',
+                borderColor: '#0d6efd',
+                borderRightColor: 'transparent',
+              }}
+              variant="border"
+              role="status"
+            />
+
+            <h6
+              className="mt-3 fw-semibold"
+              style={{
+                color: '#f8f9fa',
+                letterSpacing: '0.5px',
+              }}
+            >
+              Please wait...
+            </h6>
+          </div>
+        </div>
+      )}
+
       <div
         style={{
           position: 'absolute',
@@ -109,7 +156,6 @@ const Login = () => {
                 )}
 
                 <CForm>
-                  {/* Username */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold text-muted">Email Address</label>
                     <CInputGroup>
@@ -125,7 +171,6 @@ const Login = () => {
                     </CInputGroup>
                   </div>
 
-                  {/* Password */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold text-muted">Password</label>
                     <CInputGroup>
@@ -142,7 +187,6 @@ const Login = () => {
                     </CInputGroup>
                   </div>
 
-                  {/* Remember + Forgot Password */}
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <div className="form-check">
                       <input className="form-check-input" type="checkbox" id="rememberMe" />
@@ -171,7 +215,6 @@ const Login = () => {
                     </Link>
                   </div>
 
-                  {/* Sign In Button */}
                   <CButton
                     className="w-100 py-2 fw-semibold border-0 mb-3"
                     style={{

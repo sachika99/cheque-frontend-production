@@ -32,7 +32,10 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
         setNewToken(response?.data.newToken)
         setOTP(response?.data.otp)
         return true
-      } else return false
+      } else {
+        setErrorMessage(response)
+        return false
+      }
     } catch (error) {
       setErrorMessage(error?.response?.data || 'An error occurred. Please try again.')
       console.warn('Error during forgot password:', error)
@@ -46,7 +49,10 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
       const response = await authService().resetPassword(email, token, password)
       if (response?.status === 200) {
         return true
-      } else return false
+      } else {
+        setErrorMessage(response)
+        return false
+      }
     } catch (error) {
       setNewPassErrorMessage(
         error?.response?.data[0]?.description || 'An error occurred. Please try again.',
@@ -83,6 +89,9 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
       if (resetResponse) {
         onClose()
         onSuccess?.()
+      } else {
+        setErrorMessage(response)
+        return false
       }
     } catch (error) {
       console.error('Error during password reset:', error)
@@ -118,6 +127,27 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
           {forgotStep === 3 && 'Create New Password'}
         </CModalTitle>
       </CModalHeader>
+
+      {errorMessage && (
+        <CAlert
+          color="danger"
+          dismissible
+          className="mb-2 py-1 px-2 text-center"
+          style={{
+            fontSize: '1rem',
+            lineHeight: '1',
+            borderRadius: '4px',
+            paddingTop: '4px',
+            paddingBottom: '4px',
+            paddingLeft: '8px',
+            paddingRight: '8px',
+            marginBottom: '6px',
+            fontWeight: 500,
+          }}
+        >
+          {errorMessage}
+        </CAlert>
+      )}
 
       <CModalBody className="px-5 py-4">
         {isLoading && (
@@ -189,30 +219,29 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
               Enter Verification Code
             </label>
 
-           <CFormInput
-                          type="text"
-                          placeholder="0 0 0 0"
-                          value={verificationCode}
-                          onChange={(e) => setVerificationCode(e.target.value.replace(/[^0-9]/g, ''))}
-                          maxLength={4}
-                          className="mx-auto text-center"
-                          style={{
-                            width: '220px',
-                            fontSize: '1.8rem',
-                            letterSpacing: '0.6rem',
-                            fontWeight: '700',
-                            border: '2px solid #0d6efd',
-                            borderRadius: '10px',
-                            padding: '12px 0',
-                            color: '#fff',
-                            backgroundColor: '#0d1117',
-                            boxShadow: '0 2px 8px rgba(13,110,253,0.3)',
-                            transition: 'all 0.2s ease-in-out',
-                          }}
-                          onFocus={(e) => (e.target.style.boxShadow = '0 0 10px rgba(13,110,253,0.4)')}
-                          onBlur={(e) => (e.target.style.boxShadow = '0 2px 8px rgba(13,110,253,0.3)')}
-                        />
-
+            <CFormInput
+              type="text"
+              placeholder="0 0 0 0"
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value.replace(/[^0-9]/g, ''))}
+              maxLength={4}
+              className="mx-auto text-center"
+              style={{
+                width: '220px',
+                fontSize: '1.8rem',
+                letterSpacing: '0.6rem',
+                fontWeight: '700',
+                border: '2px solid #0d6efd',
+                borderRadius: '10px',
+                padding: '12px 0',
+                color: '#fff',
+                backgroundColor: '#0d1117',
+                boxShadow: '0 2px 8px rgba(13,110,253,0.3)',
+                transition: 'all 0.2s ease-in-out',
+              }}
+              onFocus={(e) => (e.target.style.boxShadow = '0 0 10px rgba(13,110,253,0.4)')}
+              onBlur={(e) => (e.target.style.boxShadow = '0 2px 8px rgba(13,110,253,0.3)')}
+            />
 
             <div className="text-center mt-4">
               <p

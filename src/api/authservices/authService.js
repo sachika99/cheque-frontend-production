@@ -7,69 +7,61 @@ const authService = () => {
     try {
       const response = await axios.post(
         API_CONFIGURATIONS.ENDPOINTS.REGISTER_USER,
-
-        { email: email, username: username, password: password },
-        { headers: { 'Content-Type': 'application/json' } },
+        { email, username, password },
+        { headers: { 'Content-Type': 'application/json' } }
       )
-
       return response
     } catch (error) {
-      throw error
+      return error.response?.data?.message || 'Registration failed. Please try again.'
     }
   }
+
   const login = async (username, password) => {
     try {
       const response = await axios.post(
         API_CONFIGURATIONS.ENDPOINTS.LOGIN_USER,
-
-        {
-          username: username,
-          password: password,
-        },
-        { headers: { 'Content-Type': 'application/json' } },
+        { username, password },
+        { headers: { 'Content-Type': 'application/json' } }
       )
-
       return response
     } catch (error) {
-      throw error
+      return error.response?.data?.message || 'Login failed. Please try again.'
     }
   }
+
   const forgotPassword = async (email) => {
     try {
       const response = await axios.post(
         `${API_CONFIGURATIONS.ENDPOINTS.FORGOT_PASSWORD_USER}?email=${encodeURIComponent(email)}`,
         null,
-        { headers: { 'Content-Type': 'application/json' } },
+        { headers: { 'Content-Type': 'application/json' } }
       )
+
       if (response?.data) {
         const data = response.data
         const encryptedOtp = data.otp
         const decryptedOtp = encryptedOtp ? decryptOtp(encryptedOtp) : ''
         return {
-          data: {
-            ...data,
-            otp: decryptedOtp,
-          },
-           status:response.status
+          ...data,
+          otp: decryptedOtp,
+          status: response.status,
         }
       }
     } catch (error) {
-      throw error
+      return error.response?.data?.message || 'Password reset request failed. Please try again.'
     }
   }
+
   const resetPassword = async (email, token, newPassword) => {
-    // debugger
     try {
       const response = await axios.post(
         API_CONFIGURATIONS.ENDPOINTS.RESET_PASSWORD_USER,
-
-        { email: email, token: token, newPassword: newPassword },
-        { headers: { 'Content-Type': 'application/json' } },
+        { email, token, newPassword },
+        { headers: { 'Content-Type': 'application/json' } }
       )
-      // debugger
       return response
     } catch (error) {
-      throw error
+      return error.response?.data?.message || 'Reset password failed. Please try again.'
     }
   }
 
@@ -77,94 +69,37 @@ const authService = () => {
     try {
       const response = await axios.post(
         API_CONFIGURATIONS.ENDPOINTS.REGISTER_USER,
-
-        { email: email, username: username, password: password },
-        { headers: { 'Content-Type': 'application/json' } },
+        { email, username, password },
+        { headers: { 'Content-Type': 'application/json' } }
       )
-
       return response
     } catch (error) {
-      throw error
+      return error.response?.data?.message || 'Logout failed. Please try again.'
     }
   }
+
   const verifyEmail = async (email) => {
     try {
       const response = await axios.post(
         `${API_CONFIGURATIONS.ENDPOINTS.VERIFY_EMAIL}?email=${encodeURIComponent(email)}`,
         null,
-        { headers: { 'Content-Type': 'application/json' } },
+        { headers: { 'Content-Type': 'application/json' } }
       )
+
       if (response?.data) {
         const data = response.data
         const encryptedOtp = data.otp
         const decryptedOtp = encryptedOtp ? decryptOtp(encryptedOtp) : ''
         return {
-          data: {
-            ...data,
-            otp: decryptedOtp,
-          },
-            status:response.status
+          ...data,
+          otp: decryptedOtp,
+          status: response.status,
         }
       }
     } catch (error) {
-      throw error
+      return error.response?.data?.message || 'Email verification failed. Please try again.'
     }
   }
-  // const validManager = async (username, password) => {
-  //   try {
-  //     const response = await axios.post(
-  //       API_CONFIGURATIONS.POST_VALIDATE_MANAGER,
-  //       { Username: username, Password: password },
-  //       { headers: { "Content-Type": "application/json" } }
-  //     );
-  //     if (response.status === 200) return { success: true, message: response.data };
-  //     return { success: false, message: "Unexpected response from server." };
-  //   } catch (error) {
-  //     return { success: false, message: error.response?.data || "Login failed. Please check your credentials." };
-  //   }
-  // };
-
-  // const validAccountant = async (username, password) => {
-  //   try {
-  //     const response = await axios.post(
-  //       API_CONFIGURATIONS.POST_VALIDATE_ACCOUNTANT,
-  //       { Username: username, Password: password },
-  //       { headers: { "Content-Type": "application/json" } }
-  //     );
-  //     if (response.status === 200) return { success: true, message: response.data };
-  //     return { success: false, message: "Unexpected response from server." };
-  //   } catch (error) {
-  //     return { success: false, message: error.response?.data || "Login failed. Please check your credentials." };
-  //   }
-  // };
-
-  // const validateUser = async (username, password) => {
-  //   const roleEndpoints = {
-  //     manager: API_CONFIGURATIONS.POST_VALIDATE_MANAGER,
-  //     accountant: API_CONFIGURATIONS.POST_VALIDATE_ACCOUNTANT,
-  //     chiefCashier: API_CONFIGURATIONS.POST_VALIDATE_CHIEF_CASHIER,
-  //   };
-  //   for (const [role, endpoint] of Object.entries(roleEndpoints)) {
-  //     try {
-  //       const response = await axios.post(
-  //         endpoint,
-  //         { Username: username, Password: password },
-  //         { headers: { "Content-Type": "application/json" } }
-  //       );
-  //       if (response.status === 200) return { success: true, role, message: response.data };
-  //     } catch (error) {
-  //       if (error.response?.status !== 401) console.error(`Error validating ${role}:`, error.message);
-  //     }
-  //   }
-  //   return { success: false, message: "Invalid credentials for all roles." };
-  // };
-
-
-  // };
-
-
-
-  // };
 
   return { register, login, forgotPassword, resetPassword, logout, verifyEmail }
 }
