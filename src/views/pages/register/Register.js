@@ -14,7 +14,7 @@ import {
   CAlert,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
+import * as icon from '@coreui/icons'
 import authService from '../../../api/authservices/authService'
 import EmailVerificationModal from '../emailVerify/EmailVerificationModal'
 
@@ -24,36 +24,56 @@ const Register = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
-  
+  const [warningMessage, setWarningMessage] = useState('')
+
   const navigate = useNavigate()
 
   const registerUser = async () => {
     try {
       setSuccessMessage('')
       setErrorMessage('')
-      
-      if (password !== confirmPassword) {
+      setWarningMessage('')
+      if (username === '') {
+        setWarningMessage('Username is required!')
+        return
+      } else if (email === '') {
+        setWarningMessage('Email is required!')
+        return
+      } else if (password === '') {
+        setWarningMessage('Password is required!')
+        return
+      } else if (confirmPassword === '') {
+        setWarningMessage('Please confirm your password!')
+        return
+      } else if (password !== confirmPassword) {
+        setWarningMessage('')
         setErrorMessage('Passwords do not match!')
         return
       }
-     setShowForgotModal(true)
+
+      setShowForgotModal(true)
     } catch (error) {
-      console.warn("Error registering user:", error);
+      console.warn('Error registering user:', error)
       setErrorMessage('Registration failed. Please try again.')
     }
-  };
+  }
+
   const clear = () => {
     setEmail('')
     setUsername('')
     setPassword('')
     setConfirmPassword('')
-    setSuccessMessage('user created successful! Congradulations wellcome to janasiri')
+    setWarningMessage('')
+    setErrorMessage('')
+    setSuccessMessage('User created successfully! Welcome to Janasiri!')
     setTimeout(() => {
-          navigate('/login')
-        }, 1000)
-  };
+      navigate('/login')
+    }, 1000)
+  }
 
   return (
     <div
@@ -89,34 +109,55 @@ const Register = () => {
                 <div className="text-center mb-4">
                   <h2 className="fw-bold text-body">Register</h2>
                   <p className="text-muted" style={{ fontSize: '0.9rem' }}>
-                     Join <strong>JANASIRI MOTORS</strong> and get started
+                    Join <strong>JANASIRI MOTORS</strong> and get started
                   </p>
                 </div>
 
                 {successMessage && (
-                  <CAlert color="success" className="mb-3">
+                  <CAlert
+                    color="success"
+                    className="mb-3 py-2 px-3"
+                    dismissible
+                    style={{ fontSize: '0.875rem', borderRadius: '6px' }}
+                  >
                     {successMessage}
                   </CAlert>
                 )}
 
                 {errorMessage && (
-                  <CAlert color="danger" className="mb-3">
+                  <CAlert
+                    color="danger"
+                    className="mb-3 py-2 px-3"
+                    dismissible
+                    style={{ fontSize: '0.875rem', borderRadius: '6px' }}
+                  >
                     {errorMessage}
                   </CAlert>
                 )}
 
+                {warningMessage && (
+                  <CAlert
+                     color="warning"
+                    className="mb-3 py-2 px-3"
+                    dismissible
+                    style={{ fontSize: '0.875rem', borderRadius: '6px' }}
+                  >
+                    {warningMessage}
+                  </CAlert>
+                )}
                 <CForm>
                   <div className="mb-3">
                     <label className="form-label fw-semibold text-muted">Username</label>
                     <CInputGroup>
                       <CInputGroupText>
-                        <CIcon icon={cilUser} />
+                        <CIcon icon={icon.cilUser} />
                       </CInputGroupText>
-                      <CFormInput 
-                        placeholder="Enter your username" 
+                      <CFormInput
+                        placeholder="Enter your username"
                         autoComplete="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        required
                       />
                     </CInputGroup>
                   </div>
@@ -125,11 +166,13 @@ const Register = () => {
                     <label className="form-label fw-semibold text-muted">Email</label>
                     <CInputGroup>
                       <CInputGroupText>@</CInputGroupText>
-                      <CFormInput 
-                        placeholder="Enter your email" 
+                      <CFormInput
+                        type="email"
+                        placeholder="Enter your email"
                         autoComplete="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                       />
                     </CInputGroup>
                   </div>
@@ -138,15 +181,30 @@ const Register = () => {
                     <label className="form-label fw-semibold text-muted">Password</label>
                     <CInputGroup>
                       <CInputGroupText>
-                        <CIcon icon={cilLockLocked} />
+                        <CIcon icon={icon.cilLockLocked} />
                       </CInputGroupText>
                       <CFormInput
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="Enter your password"
                         autoComplete="new-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                       />
+                      <CInputGroupText
+                        role="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          fontSize: '0.85rem',
+                          backgroundColor: 'transparent',
+                          color: 'var(--cui-body-color)',
+                          userSelect: 'none',
+                        }}
+                      >
+                        {showPassword ? 'Hide' : 'Show'}
+                      </CInputGroupText>
                     </CInputGroup>
                   </div>
 
@@ -154,15 +212,30 @@ const Register = () => {
                     <label className="form-label fw-semibold text-muted">Repeat Password</label>
                     <CInputGroup>
                       <CInputGroupText>
-                        <CIcon icon={cilLockLocked} />
+                        <CIcon icon={icon.cilLockLocked} />
                       </CInputGroupText>
                       <CFormInput
-                        type="password"
+                        type={showConfirmPassword ? 'text' : 'password'}
                         placeholder="Repeat your password"
                         autoComplete="new-password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
                       />
+                      <CInputGroupText
+                        role="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        style={{
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          fontSize: '0.85rem',
+                          backgroundColor: 'transparent',
+                          color: 'var(--cui-body-color)',
+                          userSelect: 'none',
+                        }}
+                      >
+                        {showConfirmPassword ? 'Hide' : 'Show'}
+                      </CInputGroupText>
                     </CInputGroup>
                   </div>
 
@@ -205,20 +278,18 @@ const Register = () => {
           </CCol>
         </CRow>
       </CContainer>
-       <EmailVerificationModal
+
+      <EmailVerificationModal
         visible={showForgotModal}
         onClose={() => setShowForgotModal(false)}
-        onSuccess={() =>clear()}
+        onSuccess={() => clear()}
         onError={(msg) => {
-          setShowForgotModal(false);
-          setErrorMessage(msg);
+          setShowForgotModal(false)
+          setErrorMessage(msg)
         }}
-
-         email={email}
-         username={username}
-         password={password}
-
-
+        email={email}
+        username={username}
+        password={password}
       />
     </div>
   )
