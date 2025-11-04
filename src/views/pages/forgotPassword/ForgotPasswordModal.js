@@ -33,7 +33,7 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
         setOTP(response?.data.otp)
         return true
       } else {
-        setErrorMessage(response)
+        setErrorMessage(response?.error)
         return false
       }
     } catch (error) {
@@ -50,7 +50,7 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
       if (response?.status === 200) {
         return true
       } else {
-        setErrorMessage(response)
+        setErrorMessage(response?.error)
         return false
       }
     } catch (error) {
@@ -90,7 +90,7 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
         onClose()
         onSuccess?.()
       } else {
-        setErrorMessage(response)
+        setErrorMessage(response?.error)
         return false
       }
     } catch (error) {

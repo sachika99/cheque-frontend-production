@@ -18,6 +18,7 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import authService from '../../../api/authservices/authService'
 import ForgotPasswordModal from '../forgotPassword/ForgotPasswordModal'
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const [showForgotModal, setShowForgotModal] = useState(false)
@@ -25,7 +26,9 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [warningMessage, setWarningMessage] = useState('')
   const [isFloatingLoading, setIsFloatingLoading] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const navigate = useNavigate()
 
@@ -33,6 +36,16 @@ const Login = () => {
     try {
       setErrorMessage('')
       setSuccessMessage('')
+      setWarningMessage('')
+
+      if (username === '') {
+        setWarningMessage('Username is required!')
+        return
+      } else if (password === '') {
+        setWarningMessage('password is required')
+        return
+      }
+
       setIsFloatingLoading(true)
       const response = await authService().login(username, password)
       if (response?.data && response?.status === 200) {
@@ -43,7 +56,7 @@ const Login = () => {
         navigate('/dashboard')
       } else {
         setIsFloatingLoading(false)
-        setErrorMessage(response)
+        setErrorMessage(response?.error)
       }
     } catch (error) {
       setIsFloatingLoading(false)
@@ -154,6 +167,16 @@ const Login = () => {
                     {errorMessage}
                   </CAlert>
                 )}
+                {warningMessage && (
+                  <CAlert
+                    color="warning"
+                    className="mb-3 py-2 px-3"
+                    dismissible
+                    style={{ fontSize: '0.875rem', borderRadius: '6px' }}
+                  >
+                    {warningMessage}
+                  </CAlert>
+                )}
 
                 <CForm>
                   <div className="mb-3">
@@ -178,12 +201,26 @@ const Login = () => {
                         <CIcon icon={cilLockLocked} />
                       </CInputGroupText>
                       <CFormInput
-                        type="password"
+                        type={showConfirmPassword ? 'text' : 'password'}
                         placeholder="Enter your password"
                         autoComplete="current-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
+                      <CInputGroupText
+                        role="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        style={{
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          fontSize: '0.85rem',
+                          backgroundColor: 'transparent',
+                          color: 'var(--cui-body-color)',
+                          userSelect: 'none',
+                        }}
+                      >
+                        {showConfirmPassword ?  <Eye size={20} /> : <EyeOff size={20} />}
+                      </CInputGroupText>
                     </CInputGroup>
                   </div>
 
