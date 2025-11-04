@@ -23,6 +23,8 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [newToken, setNewToken] = useState('')
   const [otp, setOTP] = useState('')
+  const [registrationEmail, setRegistrationEmail] = useState('')
+  const [registrationUserName, setRegistrationUserName] = useState('')
 
   const forgetPassword = async (email) => {
     try {
@@ -31,6 +33,8 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
       if (response?.data && response?.status === 200) {
         setNewToken(response?.data.newToken)
         setOTP(response?.data.otp)
+        setRegistrationEmail(response?.data.email)
+        setRegistrationUserName(response?.data.username)
         return true
       } else {
         setErrorMessage(response?.error)
@@ -161,12 +165,15 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
         {!isLoading && forgotStep === 1 && (
           <div>
             <p className="text-muted mb-4">
-              Enter your registered email address below. We'll send you a 4-digit verification code.
+              Enter your registered{' '}
+              <span className="fw-bold text-primary">Email address / Username</span> below. We'll
+              send you a 4-digit verification code to ypur registerd Email.
             </p>
-            <label className="form-label fw-semibold mb-2">Email Address</label>
+
+            {/* <label className="form-label fw-semibold mb-2">Email Address or Username</label> */}
             <CFormInput
               type="email"
-              placeholder="example@email.com"
+              placeholder="Email Address or Username"
               value={forgotEmail}
               onChange={(e) => setForgotEmail(e.target.value)}
               className="py-3"
@@ -176,7 +183,6 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
 
         {!isLoading && forgotStep === 2 && (
           <div className="text-center">
-
             {!otpErrorMessage && (
               <p
                 className="text-center mb-4"
@@ -187,10 +193,12 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
                 }}
               >
                 A 4-digit verification code has been sent to{' '}
-                <strong style={{ color: 'var(--cui-link-color, #0d6efd)' }}>{forgotEmail}</strong>.
+                <strong style={{ color: 'var(--cui-link-color, #0d6efd)' }}>
+                  {registrationEmail}
+                </strong>
+                .
               </p>
             )}
-
 
             {otpErrorMessage && (
               <CAlert
@@ -207,7 +215,6 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
                 {otpErrorMessage}
               </CAlert>
             )}
-
 
             <label
               className="form-label fw-semibold mb-3 d-block"
@@ -267,26 +274,46 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
         )}
 
         {!isLoading && forgotStep === 3 && (
-          <div>
-            <p className="text-muted mb-4">Choose a strong password to secure your account.</p>
+          <div className="px-2 py-3">
+            <div className="mb-4">
+              <p className="text-secondary mb-1">
+                <strong>Username:</strong> {registrationUserName}
+              </p>
+              <p className="text-secondary mb-1">
+                <strong>Email:</strong> {registrationEmail}
+              </p>
+              <p className="text-muted mb-0">
+                Please choose a strong password to secure your account.
+              </p>
+            </div>
+
             {newPassErrorMessage && (
               <CAlert
                 color="danger"
-                className="mb-3 py-2 px-3"
+                className="mb-3 py-2 px-3 shadow-sm border-0"
                 dismissible
-                style={{ fontSize: '0.875rem', borderRadius: '6px' }}
+                style={{ fontSize: '0.9rem', borderRadius: '8px' }}
               >
                 {newPassErrorMessage}
               </CAlert>
             )}
-            <label className="form-label fw-semibold mb-2">New Password</label>
-            <CFormInput
-              type="password"
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="py-3 mb-2"
-            />
+
+            <div className="mb-3">
+              <label className="form-label fw-semibold mb-2" htmlFor="newPassword">
+                New Password
+              </label>
+              <CFormInput
+                id="newPassword"
+                type="password"
+                placeholder="Enter your new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="py-3 border-1 border-secondary-subtle rounded-2"
+              />
+              <small className="text-muted">
+                Use at least 8 characters, including letters, numbers, and symbols.
+              </small>
+            </div>
           </div>
         )}
       </CModalBody>
@@ -302,7 +329,7 @@ const ForgotPasswordModal = ({ visible, onClose, onSuccess }) => {
             fontSize: '0.9rem',
             fontWeight: '600',
             borderWidth: '1.5px',
-            color: '#fff', 
+            color: '#fff',
           }}
         >
           Cancel
