@@ -12,7 +12,7 @@ const authService = () => {
       )
       return response
     } catch (error) {
-      return error.response?.data?.message || 'Registration failed. Please try again.'
+      return {error: error.response?.data?.message || 'Registration failed. Please try again.'}
     }
   }
 
@@ -25,7 +25,7 @@ const authService = () => {
       )
       return response
     } catch (error) {
-      return error.response?.data?.message || 'Login failed. Please try again.'
+      return { error: error.response?.data?.message || 'Login failed. Please try again.' }
     }
   }
 
@@ -42,13 +42,16 @@ const authService = () => {
         const encryptedOtp = data.otp
         const decryptedOtp = encryptedOtp ? decryptOtp(encryptedOtp) : ''
         return {
-          ...data,
-          otp: decryptedOtp,
-          status: response.status,
+           data: {
+            ...data,
+            otp: decryptedOtp,
+          },
+           status:response.status
         }
       }
     } catch (error) {
-      return error.response?.data?.message || 'Password reset request failed. Please try again.'
+      // return error.response?.data?.message || 'Password reset request failed. Please try again.'
+      return {error: error.response?.data?.message || 'Password reset request failed. Please try again.'}
     }
   }
 
@@ -74,7 +77,7 @@ const authService = () => {
       )
       return response
     } catch (error) {
-      return error.response?.data?.message || 'Logout failed. Please try again.'
+      return {error: error.response?.data?.message || 'Logout failed. Please try again.'}
     }
   }
 
@@ -91,13 +94,15 @@ const authService = () => {
         const encryptedOtp = data.otp
         const decryptedOtp = encryptedOtp ? decryptOtp(encryptedOtp) : ''
         return {
-          ...data,
-          otp: decryptedOtp,
-          status: response.status,
+           data: {
+            ...data,
+            otp: decryptedOtp,
+          },
+           status:response.status
         }
       }
     } catch (error) {
-      return error.response?.data?.message || 'Email verification failed. Please try again.'
+      return {error: error.response?.data?.message || 'Email verification failed. Please try again.'}
     }
   }
 

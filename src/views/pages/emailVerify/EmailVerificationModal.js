@@ -38,11 +38,11 @@ const EmailVerificationModal = ({
         setOTP(emailResponse.data.otp)
         setForgotStep(1)
       } else {
-        onError?.(emailResponse)
+        onError?.(emailResponse?.error)
       }
     } catch (error) {
       console.warn('Error verifying email:', error)
-      onError?.(error?.response?.data || response)
+      onError?.(error?.response?.data || emailResponse?.error)
     } finally {
       setIsLoading(false)
     }
@@ -59,10 +59,10 @@ const EmailVerificationModal = ({
           onClose()
           onSuccess?.()
         } else {
-          onError?.(response)
+          onError?.(response?.error)
         }
       } catch (error) {
-        onError?.(error?.response?.data || response)
+        onError?.(error?.response?.data || response?.error)
       } finally {
         setIsFloatingLoading(false)
       }
