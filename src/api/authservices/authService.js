@@ -12,7 +12,7 @@ const authService = () => {
       )
       return response
     } catch (error) {
-      return {error: error.response?.data?.message || 'Registration failed. Please try again.'}
+      return {error: error.response?.data || 'Registration failed. Please try again.'}
     }
   }
 
@@ -25,7 +25,7 @@ const authService = () => {
       )
       return response
     } catch (error) {
-      return { error: error.response?.data?.message || 'Login failed. Please try again.' }
+      return { error: error.response?.data || 'Login failed. Please try again.' }
     }
   }
 
@@ -51,7 +51,7 @@ const authService = () => {
       }
     } catch (error) {
       // return error.response?.data?.message || 'Password reset request failed. Please try again.'
-      return {error: error.response?.data?.message || 'Password reset request failed. Please try again.'}
+      return {error: error.response?.data|| 'Password reset request failed. Please try again.'}
     }
   }
 
@@ -77,7 +77,7 @@ const authService = () => {
       )
       return response
     } catch (error) {
-      return {error: error.response?.data?.message || 'Logout failed. Please try again.'}
+      return {error: error.response?.data || 'Logout failed. Please try again.'}
     }
   }
 
@@ -102,7 +102,8 @@ const authService = () => {
         }
       }
     } catch (error) {
-      return {error: error.response?.data?.message || 'Email verification failed. Please try again.'}
+      debugger
+      return {error: error.response?.data || 'Email verification failed. Please try again.'}
     }
   }
 
