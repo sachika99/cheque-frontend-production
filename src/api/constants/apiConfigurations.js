@@ -1,5 +1,5 @@
 const BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || 'https://localhost:44362/api';
+    import.meta.env.VITE_BASE_URL || 'https://localhost:44362/api';
 
 export const API_CONFIGURATIONS = {
     BASE_URL: BASE_URL,
