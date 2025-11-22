@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_CONFIGURATIONS } from '../constants/apiConfigurations';
+import { API_CONFIGURATIONS } from '../../constants/apiConfigurations';
 
 const axiosInstance = axios.create({
   baseURL: API_CONFIGURATIONS.BASE_URL,
@@ -19,10 +19,10 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-class VendorService { 
-  async getAllVendors() {
+class BankService { 
+  async getAllBanks() {
     try {
-      const response = await axiosInstance.get(API_CONFIGURATIONS.ENDPOINTS.VENDORS);
+      const response = await axiosInstance.get(API_CONFIGURATIONS.ENDPOINTS.BANKS);
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -38,9 +38,9 @@ class VendorService {
     }
   }
  
-  async getVendorById(id) {
+  async getBankById(id) {
     try {
-      const response = await axiosInstance.get(API_CONFIGURATIONS.ENDPOINTS.VENDOR_BY_ID(id));
+      const response = await axiosInstance.get(API_CONFIGURATIONS.ENDPOINTS.BANK_BY_ID(id));
       return response.data;
     } catch (error) {
       throw this.handleError(error);
@@ -71,27 +71,27 @@ class VendorService {
     }
   }
  
-  async createVendor(vendorData) {
+  async createBank(BankData) {
     try {
-      const response = await axiosInstance.post(API_CONFIGURATIONS.ENDPOINTS.VENDORS, vendorData);
+      const response = await axiosInstance.post(API_CONFIGURATIONS.ENDPOINTS.BANKS, BankData);
       return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
   }
  
-  async updateVendor(id, vendorData) {
+  async updateBank(id, bankData) {
     try {
-      const response = await axiosInstance.put(API_CONFIGURATIONS.ENDPOINTS.VENDOR_BY_ID(id), vendorData);
+      const response = await axiosInstance.put(API_CONFIGURATIONS.ENDPOINTS.BANK_BY_ID(id), bankData);
       return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
   }
  
-  async deleteVendor(id) {
+  async deleteBank(id) {
     try {
-      await axiosInstance.delete(API_CONFIGURATIONS.ENDPOINTS.VENDOR_BY_ID(id));
+      await axiosInstance.delete(API_CONFIGURATIONS.ENDPOINTS.BANK_BY_ID(id));
       return true;
     } catch (error) {
       throw this.handleError(error);
@@ -115,6 +115,14 @@ class VendorService {
       throw this.handleError(error);
     }
   }
+  async createBankAndAccount(BankData) {
+    try {
+      const response = await axiosInstance.post(API_CONFIGURATIONS.ENDPOINTS.BANKSVACCOUNT, BankData);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
  
   handleError(error) {
     if (error.response) { 
@@ -127,4 +135,4 @@ class VendorService {
   }
 }
 
-export default new VendorService();
+export default new BankService();

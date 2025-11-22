@@ -15,7 +15,7 @@ import {
 } from '@coreui/react'
 import { cilArrowLeft, cilSave } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-import vendorService from '../../api/services/vendorService'
+import vendorService from '../../../api/services/VendorServices/vendorService'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const VendorForm = () => {
