@@ -102,7 +102,6 @@ const authService = () => {
         }
       }
     } catch (error) {
-      debugger
       return {error: error.response?.data || 'Email verification failed. Please try again.'}
     }
   }

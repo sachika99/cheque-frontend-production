@@ -1,6 +1,5 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
-// import MainTable from './components/pages/MainTable'
 
 
 const MainTable = React.lazy(() => import('./components/pages/MainTable'))
@@ -57,13 +56,25 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 // Vendors
-const VendorList = React.lazy(() => import('./views/chequeSystem/VendorList'))
-const VendorForm = React.lazy(() => import('./views/chequeSystem/VendorForm'))
+const VendorList = React.lazy(() => import('./views/chequeSystem/vendor/VendorList'))
+const VendorForm = React.lazy(() => import('./views/chequeSystem/vendor/VendorForm'))
+
+const BankList = React.lazy(() => import('./views/chequeSystem/bank/BankList'))
+const BankForm = React.lazy(() => import('./views/chequeSystem/bank/BankForm'))
+
+const BankAccountList = React.lazy(() => import('./views/chequeSystem/bankAccount/BankAccountList'))
+const BankAccountForm = React.lazy(() => import('./views/chequeSystem/bankAccount/BankAccountForm'))
+
+const ChequeBookList = React.lazy(() => import('./views/chequeSystem/chequeBooks/ChequeBookList'))
+const ChequeBookForm = React.lazy(() => import('./views/chequeSystem/chequeBooks/ChequeBookForm'))
+
+const ChequeList = React.lazy(() => import('./views/chequeSystem/cheque/ChequeList'))
+const ChequeForm = React.lazy(() => import('./views/chequeSystem/cheque/ChequeForm'))
+
 const ProtectedRoute = ({ element: Element }) => {
   const isLoggedIn = localStorage.getItem('accessToken')
   return isLoggedIn ? <Element /> : <Navigate to="/login" replace />
 }
-
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -116,6 +127,22 @@ const routes = [
   { path: '/vendors', name: 'Vendors', element: VendorList, exact: true },
   { path: '/vendors/create', name: 'Create Vendor', element: VendorForm },
   { path: '/vendors/edit/:id', name: 'Edit Vendor', element: VendorForm },
+
+  { path: '/banks', name: 'Banks', element: BankList, exact: true },
+  { path: '/banks/create', name: 'Create Banks', element: BankForm },
+  { path: '/banks/edit/:id', name: 'Edit Banks', element: BankForm },
+
+  { path: '/bankAccounts', name: 'Bank Accounts', element: BankAccountList, exact: true },
+  { path: '/bankAccounts/create', name: 'Create bank Accounts', element: BankAccountForm },
+  { path: '/bankAccounts/edit/:id', name: 'Edit bank Accounts', element: BankAccountForm },
+
+  {path: '/chequeBook', name: 'Cheque Books', element: ChequeBookList, exact: true },
+  { path: '/chequeBook/create', name: 'Create Cheque Book', element: ChequeBookForm},
+  { path: '/chequeBook/edit/:id', name: 'Edit Cheque Book', element: ChequeBookForm },
+  
+    {path: '/cheque', name: 'Cheques', element: ChequeList, exact: true },
+  { path: '/cheque/create', name: 'Create Cheque', element: ChequeForm},
+  { path: '/cheque/edit/:id', name: 'Edit Cheque', element: ChequeForm },
 ]
 
 export default routes

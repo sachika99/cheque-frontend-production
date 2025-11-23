@@ -17,6 +17,20 @@ export const API_CONFIGURATIONS = {
         VENDOR_DEACTIVATE: (id) => `/vendors/${id}/deactivate`,
         REGISTER_USER: `${BASE_URL}/register`,
 
+        BANKS: '/Banks',
+        BANK_BY_ID: (id) => `/banks/${id}`,
+        BANKSVACCOUNT: '/Banks/account',
+
+        BANKACCOUNT: '/BankAccounts',
+        BANKACCOUNT_BY_ID: (id) => `/BankAccounts/${id}`,
+        
+        CHEQUEBOOK: '/ChequeBooks',
+        CHEQUEBOOK_BY_ID: (id) => `/ChequeBooks/${id}`,
+        CHEQUEBOOK_BY_BANKACCOUNTID: (id) => `/ChequeBooks/account/${id}`,
+
+        CHEQUE: '/Cheques',
+        CHEQUE_BY_ID: (id) => `/Cheques/${id}`,
+
         LOGIN_USER: `${BASE_URL}/login`,
         FORGOT_PASSWORD_USER: `${BASE_URL}/forgot-password`,
         RESET_PASSWORD_USER: `${BASE_URL}/reset-password`,
