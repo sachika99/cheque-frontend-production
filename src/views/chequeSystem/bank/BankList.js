@@ -14,6 +14,11 @@ import {
   CFormInput,
   CFormSelect,
   CBadge,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
 } from '@coreui/react'
 import { cilSearch, cilPlus, cilPencil, cilTrash, cilCheck, cilX, cilSave } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
@@ -40,16 +45,16 @@ const BankList = () => {
   const [accounts, setAccounts] = useState([])
 
   const [editingAccountId, setEditingAccountId] = useState(null)
-const [editForm, setEditForm] = useState({
-  id: 0,
-  bankId: 0,
-  bankName: '',
-  accountNo: '',
-  accountName: '',
-  accountType: '',
-  balance: 0,
-  status: '',
-})
+  const [editForm, setEditForm] = useState({
+    id: 0,
+    bankId: 0,
+    bankName: '',
+    accountNo: '',
+    accountName: '',
+    accountType: '',
+    balance: 0,
+    status: '',
+  })
 
   const BANK_STATUS = {
     0: { label: 'Unknown', color: 'info' },
@@ -59,14 +64,12 @@ const [editForm, setEditForm] = useState({
     4: { label: 'Blacklisted', color: 'danger' },
   }
 
- 
   useEffect(() => {
     fetchBanks()
     fetchBankAccounts()
   }, [currentPage, searchTerm, statusFilter])
 
-
-    useEffect(() => {
+  useEffect(() => {
     console.log(editForm)
   }, [editForm])
 
@@ -74,33 +77,31 @@ const [editForm, setEditForm] = useState({
     setExpandedRow(expandedRow === id ? null : id)
   }
 
-  const beginEdit = (acc,bank) => {
-
-  setEditingAccountId(acc.id)
-  setEditForm({
-    id: acc.id,
-    bankId: bank.id,
-    bankName: bank.bankName || '',
-    accountNo: acc.accountNo,
-    accountName: acc.accountName,
-    accountType: acc.accountType,
-    balance: acc.balance,
-    status: acc.status,
-  })
-}
+  const beginEdit = (acc, bank) => {
+    setEditingAccountId(acc.id)
+    setEditForm({
+      id: acc.id,
+      bankId: bank.id,
+      bankName: bank.bankName || '',
+      accountNo: acc.accountNo,
+      accountName: acc.accountName,
+      accountType: acc.accountType,
+      balance: acc.balance,
+      status: acc.status,
+    })
+  }
 
   const saveEdit = async (id) => {
-    const response = await bankAccountServices.updateBankAccount(id,editForm)
-    console.log(editForm,id)
+    const response = await bankAccountServices.updateBankAccount(id, editForm)
+    console.log(editForm, id)
     setEditingAccountId(null)
-     await fetchBankAccounts()
+    await fetchBankAccounts()
     toast.success('Account Updated')
-   
   }
 
   const deleteAccount = async (id) => {
     const response = await bankAccountServices.deleteBankAccount(id)
-     await fetchBankAccounts()
+    await fetchBankAccounts()
     toast.success('Account Deleted')
   }
 
@@ -117,7 +118,7 @@ const [editForm, setEditForm] = useState({
       setLoading(false)
     }
   }
-   const fetchBankAccounts = async () => {
+  const fetchBankAccounts = async () => {
     setLoading(true)
     try {
       const response = await bankAccountServices.getAllBankAccounts()
@@ -179,7 +180,11 @@ const [editForm, setEditForm] = useState({
         <CCardHeader className="py-3 px-4">
           <div className="d-flex justify-content-between align-items-center">
             <h5 className="mb-0 fw-bold">Bank Management</h5>
-            <CButton color="primary" className="px-4 py-2" onClick={() => navigate('/banks/create')}>
+            <CButton
+              color="primary"
+              className="px-4 py-2"
+              onClick={() => navigate('/banks/create')}
+            >
               <CIcon icon={cilPlus} className="me-2" />
               Add Bank
             </CButton>
@@ -292,11 +297,15 @@ const [editForm, setEditForm] = useState({
                           {bankAccounts.length === 0 ? (
                             <div className="text-muted">No accounts found</div>
                           ) : (
-                            <CTable  className="mt-3">
+                            <CTable className="mt-3">
                               <CTableHead>
                                 <CTableRow>
-                                  <CTableHeaderCell className="py-3 px-3">Account No</CTableHeaderCell>
-                                  <CTableHeaderCell className="py-3 px-3">Account Name</CTableHeaderCell>
+                                  <CTableHeaderCell className="py-3 px-3">
+                                    Account No
+                                  </CTableHeaderCell>
+                                  <CTableHeaderCell className="py-3 px-3">
+                                    Account Name
+                                  </CTableHeaderCell>
                                   <CTableHeaderCell className="py-3 px-3">Type</CTableHeaderCell>
                                   <CTableHeaderCell className="py-3 px-3">Balance</CTableHeaderCell>
                                   <CTableHeaderCell className="py-3 px-3">Status</CTableHeaderCell>
@@ -313,7 +322,10 @@ const [editForm, setEditForm] = useState({
                                           <CFormInput
                                             value={editForm.accountNo}
                                             onChange={(e) =>
-                                              setEditForm((p) => ({ ...p, accountNo: e.target.value }))
+                                              setEditForm((p) => ({
+                                                ...p,
+                                                accountNo: e.target.value,
+                                              }))
                                             }
                                           />
                                         </CTableDataCell>
@@ -322,7 +334,10 @@ const [editForm, setEditForm] = useState({
                                           <CFormInput
                                             value={editForm.accountName}
                                             onChange={(e) =>
-                                              setEditForm((p) => ({ ...p, accountName: e.target.value }))
+                                              setEditForm((p) => ({
+                                                ...p,
+                                                accountName: e.target.value,
+                                              }))
                                             }
                                           />
                                         </CTableDataCell>
@@ -331,7 +346,10 @@ const [editForm, setEditForm] = useState({
                                           <CFormSelect
                                             value={editForm.accountType}
                                             onChange={(e) =>
-                                              setEditForm((p) => ({ ...p, accountType: e.target.value }))
+                                              setEditForm((p) => ({
+                                                ...p,
+                                                accountType: e.target.value,
+                                              }))
                                             }
                                           >
                                             <option>Savings</option>
@@ -346,7 +364,10 @@ const [editForm, setEditForm] = useState({
                                             type="number"
                                             value={editForm.balance}
                                             onChange={(e) =>
-                                              setEditForm((p) => ({ ...p, balance: e.target.value }))
+                                              setEditForm((p) => ({
+                                                ...p,
+                                                balance: e.target.value,
+                                              }))
                                             }
                                           />
                                         </CTableDataCell>
@@ -368,7 +389,7 @@ const [editForm, setEditForm] = useState({
                                             size="sm"
                                             color="success"
                                             className="px-3"
-                                            onClick={() => saveEdit(acc.id,bank)}
+                                            onClick={() => saveEdit(acc.id, bank)}
                                           >
                                             <CIcon icon={cilSave} />
                                           </CButton>
@@ -376,11 +397,21 @@ const [editForm, setEditForm] = useState({
                                       </>
                                     ) : (
                                       <>
-                                        <CTableDataCell className="py-3 px-3">{acc.accountNo}</CTableDataCell>
-                                        <CTableDataCell className="py-3 px-3">{acc.accountName}</CTableDataCell>
-                                        <CTableDataCell className="py-3 px-3">{acc.accountType}</CTableDataCell>
-                                        <CTableDataCell className="py-3 px-3">{acc.balance}</CTableDataCell>
-                                        <CTableDataCell className="py-3 px-3">{acc.status}</CTableDataCell>
+                                        <CTableDataCell className="py-3 px-3">
+                                          {acc.accountNo}
+                                        </CTableDataCell>
+                                        <CTableDataCell className="py-3 px-3">
+                                          {acc.accountName}
+                                        </CTableDataCell>
+                                        <CTableDataCell className="py-3 px-3">
+                                          {acc.accountType}
+                                        </CTableDataCell>
+                                        <CTableDataCell className="py-3 px-3">
+                                          {acc.balance}
+                                        </CTableDataCell>
+                                        <CTableDataCell className="py-3 px-3">
+                                          {acc.status}
+                                        </CTableDataCell>
 
                                         <CTableDataCell className="py-3 px-3">
                                           <CButton
@@ -388,7 +419,7 @@ const [editForm, setEditForm] = useState({
                                             color="primary"
                                             variant="outline"
                                             className="me-2 px-3"
-                                            onClick={() => beginEdit(acc,bank)}
+                                            onClick={() => beginEdit(acc, bank)}
                                           >
                                             <CIcon icon={cilPencil} />
                                           </CButton>
@@ -420,7 +451,23 @@ const [editForm, setEditForm] = useState({
           </CTable>
         </CCardBody>
       </CCard>
-
+      <CModal visible={deleteModal} onClose={() => setDeleteModal(false)}>
+        <CModalHeader>
+          <CModalTitle className="fw-bold">Delete Bank</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          Delete bank <strong>{selectedBank?.id}</strong>? This action cannot
+          be undone.
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setDeleteModal(false)}>
+            Cancel
+          </CButton>
+          <CButton color="danger" onClick={confirmDelete}>
+            Delete
+          </CButton>
+        </CModalFooter>
+      </CModal>
       <ToastContainer position="top-right" autoClose={2300} theme="colored" />
     </>
   )
