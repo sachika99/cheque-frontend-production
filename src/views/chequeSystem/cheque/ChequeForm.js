@@ -33,7 +33,7 @@ const ChequeForm = () => {
   const [accounts, setAccounts] = useState([])
   const [ChequeBooks, setChequeBooks] = useState([])
   const [nextChequeId, setNextChequeId] = useState('')
-  const [fetchingCode, setFetchingCode] = useState(false)
+  const [paymentTime, setPaymentTime] = useState(0)
 
   const [formData, setFormData] = useState({
     chequeId: '',
@@ -69,29 +69,22 @@ const ChequeForm = () => {
   }, [])
 
   const generateNextChequeId = async () => {
-    setFetchingCode(true)
     try {
       const res = await chequeServices.getAllCheques()
       const items = Array.isArray(res) ? res : res?.data || []
-
       const validIds = items
         .map(x => x.chequeId)
-        .filter(id => typeof id === 'string' && /^CHEQ\d{3,}$/.test(id))
+        .filter(id => typeof id === "string" && /^CHEQ\d{3,}$/.test(id))
 
       if (validIds.length === 0) {
         setNextChequeId('CHEQ001')
       } else {
-        const numbers = validIds.map(code =>
-          parseInt(code.replace('CHEQ', ''))
-        )
-
-        const nextNum = Math.max(...numbers) + 1
-        setNextChequeId(`CHEQ${String(nextNum).padStart(3, '0')}`)
+        const numbers = validIds.map(code => parseInt(code.replace("CHEQ", "")))
+        const next = Math.max(...numbers) + 1
+        setNextChequeId(`CHEQ${String(next).padStart(3, "0")}`)
       }
     } catch {
       setNextChequeId('CHEQ001')
-    } finally {
-      setFetchingCode(false)
     }
   }
 
@@ -133,7 +126,12 @@ const ChequeForm = () => {
         isVerified: p.isVerified,
         isOverdue: p.isOverdue,
       })
+
       await fetchChequeBooks(p.bankAccountId)
+
+      const sup = suppliers.find(x => x.id === p.supplierId)
+      setPaymentTime(sup?.crediPeriodDays ?? 0)
+
     } catch (e) {
       toast.error(e.message)
     } finally {
@@ -142,8 +140,22 @@ const ChequeForm = () => {
   }
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
+    const { name, value } = e.target
+
+    if (name === "chequeDate" && paymentTime > 0) {
+      const due = new Date(value)
+      due.setDate(due.getDate() + paymentTime)
+      const formatted = due.toISOString().substring(0, 10)
+
+      setFormData(prev => ({
+        ...prev,
+        chequeDate: value,
+        dueDate: formatted
+      }))
+      return
+    }
+
+    setFormData(prev => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e) => {
@@ -160,13 +172,13 @@ const ChequeForm = () => {
 
       if (isEditMode) {
         await chequeServices.updateCheque(id, payload)
-        toast.success('Payment Updated')
+        toast.success("Payment Updated")
       } else {
         await chequeServices.createCheque(payload)
-        toast.success('Payment Created')
+        toast.success("Payment Created")
       }
 
-      setTimeout(() => navigate('/cheque'), 1200)
+      setTimeout(() => navigate("/cheque"), 1200)
     } catch (err) {
       toast.error(err.message)
     } finally {
@@ -188,7 +200,7 @@ const ChequeForm = () => {
         <CCardHeader>
           <div className="d-flex justify-content-between align-items-center">
             <h4 className="mb-0 d-flex align-items-center gap-3">
-              {isEditMode ? 'Edit Cheque Payment' : 'Add Cheque Payment'}
+              {isEditMode ? "Edit Cheque Payment" : "Add Cheque Payment"}
 
               {!isEditMode ? (
                 <span className="badge bg-success px-3 py-2">{nextChequeId}</span>
@@ -201,7 +213,7 @@ const ChequeForm = () => {
               variant="outline"
               color="secondary"
               size="sm"
-              onClick={() => navigate('/cheque')}
+              onClick={() => navigate("/cheque")}
             >
               <CIcon icon={cilArrowLeft} className="me-2" />
               Back
@@ -212,19 +224,25 @@ const ChequeForm = () => {
         <CCardBody className="pt-4">
           <CForm onSubmit={handleSubmit}>
             <CRow className="mb-4">
+
               <CCol md={4}>
-                <CFormLabel className="fw-medium">Supplier <span className="text-danger">*</span></CFormLabel>
+                <CFormLabel className="fw-medium">
+                  Supplier <span className="text-danger">*</span>
+                </CFormLabel>
+
                 <CFormSelect
                   name="supplierId"
                   required
                   value={formData.supplierId}
                   onChange={(e) => {
                     const s = suppliers.find(x => x.id == e.target.value)
+                    setPaymentTime(s?.crediPeriodDays ?? 0)
+
                     setFormData(prev => ({
                       ...prev,
                       supplierId: s?.id,
-                      supplierName: s?.vendorName || '',
-                      payeeName: s?.vendorName || '',
+                      supplierName: s?.vendorName || "",
+                      payeeName: s?.vendorName || "",
                     }))
                   }}
                 >
@@ -236,7 +254,10 @@ const ChequeForm = () => {
               </CCol>
 
               <CCol md={4}>
-                <CFormLabel className="fw-medium">Bank Account <span className="text-danger">*</span></CFormLabel>
+                <CFormLabel className="fw-medium">
+                  Bank Account <span className="text-danger">*</span>
+                </CFormLabel>
+
                 <CFormSelect
                   name="bankAccountId"
                   required
@@ -244,10 +265,11 @@ const ChequeForm = () => {
                   onChange={(e) => {
                     const a = accounts.find(x => x.id == e.target.value)
                     fetchChequeBooks(a?.id)
+
                     setFormData(prev => ({
                       ...prev,
                       bankAccountId: a?.id,
-                      accountNo: a?.accountNo || '',
+                      accountNo: a?.accountNo || "",
                     }))
                   }}
                 >
@@ -261,18 +283,18 @@ const ChequeForm = () => {
               </CCol>
 
               <CCol md={4}>
-                <CFormLabel className="fw-medium">Cheque Book No <span className="text-danger">*</span></CFormLabel>
+                <CFormLabel className="fw-medium">
+                  Cheque Book No <span className="text-danger">*</span>
+                </CFormLabel>
 
                 <CFormSelect
                   required
-                  disabled={isEditMode || !formData.bankAccountId || ChequeBooks.length === 0}
+                  disabled={!formData.bankAccountId || ChequeBooks.length === 0}
                   name="chequeBookId"
                   value={formData.chequeBookId}
                   onChange={(e) => {
-                    if (!isEditMode) {
-                      const s = ChequeBooks.find(x => x.id == e.target.value)
-                      setFormData(prev => ({ ...prev, chequeBookId: s?.id }))
-                    }
+                    const s = ChequeBooks.find(x => x.id == e.target.value)
+                    setFormData(prev => ({ ...prev, chequeBookId: s?.id }))
                   }}
                 >
                   <option value="">Select Cheque Book No</option>
@@ -287,6 +309,7 @@ const ChequeForm = () => {
                   </small>
                 )}
               </CCol>
+
             </CRow>
 
             <hr className="my-4" />
@@ -309,6 +332,7 @@ const ChequeForm = () => {
             </CRow>
 
             <CRow className="mb-4">
+
               <CCol md={4}>
                 <CFormLabel>Cheque No</CFormLabel>
                 <CFormInput required name="chequeNo" value={formData.chequeNo} onChange={handleChange} />
@@ -316,13 +340,42 @@ const ChequeForm = () => {
 
               <CCol md={4}>
                 <CFormLabel>Cheque Date</CFormLabel>
-                <CFormInput type="date" required name="chequeDate" value={formData.chequeDate} onChange={handleChange} />
+                <CFormInput
+                  type="date"
+                  required
+                  name="chequeDate"
+                  value={formData.chequeDate}
+                  onChange={handleChange}
+                  disabled={!formData.supplierId}
+                />
+
+                {!formData.supplierId && (
+                  <small className="text-danger fw-semibold">
+                    Select a supplier first to enable cheque date.
+                  </small>
+                )}
               </CCol>
 
               <CCol md={4}>
-                <CFormLabel>Due Date</CFormLabel>
-                <CFormInput type="date" required name="dueDate" value={formData.dueDate} onChange={handleChange} />
+                <CFormLabel>
+                  Due Date{" "}
+                  {paymentTime > 0 && (
+                    <small className="text-success fw-semibold">
+                      Due date will set in {paymentTime} days
+                    </small>
+                  )}
+
+                </CFormLabel>
+
+                <CFormInput
+                  type="date"
+                  required
+                  name="dueDate"
+                  value={formData.dueDate}
+                  onChange={handleChange}
+                />
               </CCol>
+
             </CRow>
 
             <CRow className="mb-4">
@@ -352,7 +405,7 @@ const ChequeForm = () => {
                 variant="outline"
                 color="secondary"
                 disabled={submitting}
-                onClick={() => navigate('/cheque')}
+                onClick={() => navigate("/cheque")}
               >
                 Cancel
               </CButton>
@@ -366,7 +419,7 @@ const ChequeForm = () => {
                 ) : (
                   <>
                     <CIcon icon={cilSave} className="me-2" />
-                    {isEditMode ? 'Update Payment' : 'Create Payment'}
+                    {isEditMode ? "Update Payment" : "Create Payment"}
                   </>
                 )}
               </CButton>
