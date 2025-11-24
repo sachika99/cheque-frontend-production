@@ -193,6 +193,7 @@ const VendorList = () => {
                     <CTableHeaderCell className="text-center">Code</CTableHeaderCell>
                     <CTableHeaderCell>Vendor Name</CTableHeaderCell>
                     <CTableHeaderCell>Phone</CTableHeaderCell>
+                    <CTableHeaderCell>Payment Time</CTableHeaderCell>
                     <CTableHeaderCell>Email</CTableHeaderCell>
                     <CTableHeaderCell className="text-center">Status</CTableHeaderCell>
                     <CTableHeaderCell className="text-center">Payment Ready</CTableHeaderCell>
@@ -216,6 +217,11 @@ const VendorList = () => {
                           <div className="fw-semibold">{vendor.vendorName}</div>
                         </CTableDataCell>
                         <CTableDataCell>{vendor.vendorPhoneNo || '-'}</CTableDataCell>
+                          <CTableDataCell>
+                            <span className="badge bg-info text-dark px-2 py-1">
+                              {vendor.crediPeriodDays || '-'}
+                            </span>
+                          </CTableDataCell>
                         <CTableDataCell>{vendor.vendorEmail || '-'}</CTableDataCell>
                         <CTableDataCell className="text-center">
                           <CBadge color={VENDOR_STATUS[vendor.status]?.color || 'secondary'}>
