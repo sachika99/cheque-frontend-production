@@ -70,9 +70,11 @@ const ChequeBookForm = React.lazy(() => import('./views/chequeSystem/chequeBooks
 
 const ChequeList = React.lazy(() => import('./views/chequeSystem/cheque/ChequeList'))
 const ChequeForm = React.lazy(() => import('./views/chequeSystem/cheque/ChequeForm'))
+const ChequePrint = React.lazy(() => import('./views/chequeSystem/ChequePrint'))
+const ChequePrintView = React.lazy(() => import('./views/chequeSystem/cheque/ChequePrintView')) 
 
 const ProtectedRoute = ({ element: Element }) => {
-  const isLoggedIn = localStorage.getItem('accessToken')
+ const isLoggedIn = localStorage.getItem('accessToken')
   return isLoggedIn ? <Element /> : <Navigate to="/login" replace />
 }
 
@@ -143,6 +145,9 @@ const routes = [
     {path: '/cheque', name: 'Cheques', element: ChequeList, exact: true },
   { path: '/cheque/create', name: 'Create Cheque', element: ChequeForm},
   { path: '/cheque/edit/:id', name: 'Edit Cheque', element: ChequeForm },
+  // Cheque Print
+  { path: '/cheque/print', name: 'Cheque Print', element: ChequePrint },
+  { path: '/cheque/print/:id', name: 'Print Cheque View', element: ChequePrintView },
 ]
 
 export default routes

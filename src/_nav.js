@@ -20,6 +20,7 @@ import {
   cilWallet,
   cilBook,
   cilMoney ,
+  cilPrint,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -90,7 +91,10 @@ const _nav = [
   to: '/cheque',
   icon: <CIcon icon={cilMoney} customClassName="nav-icon" />
 },
-
+{
+  component: CNavTitle,
+  name: 'COREUI',
+},
   // {
   //   component: CNavTitle,
   //   name: 'COREUI',

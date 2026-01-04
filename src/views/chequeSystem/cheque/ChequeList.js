@@ -23,7 +23,7 @@ import {
   CPagination,
   CPaginationItem,
 } from '@coreui/react'
-import { cilPlus, cilSearch, cilTrash, cilPencil } from '@coreui/icons'
+import { cilPlus, cilSearch, cilTrash, cilPencil, cilPrint } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import { ToastContainer, toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
@@ -196,10 +196,21 @@ const ChequeList = () => {
                         <CTableDataCell className="text-center">
                           <CButton
                             size="sm"
+                            color="info"
+                            variant="outline"
+                            className="me-2"
+                            onClick={() => navigate(`/cheque/print/${p.chequeId}`)}
+                            title="Print Cheque"
+                          >
+                            <CIcon icon={cilPrint} />
+                          </CButton>
+                          <CButton
+                            size="sm"
                             color="primary"
                             variant="outline"
                             className="me-2"
                             onClick={() => navigate(`/cheque/edit/${p.chequeId}`)}
+                            title="Edit Cheque"
                           >
                             <CIcon icon={cilPencil} />
                           </CButton>
@@ -208,6 +219,7 @@ const ChequeList = () => {
                             color="danger"
                             variant="outline"
                             onClick={() => handleDelete(p)}
+                            title="Delete Cheque"
                           >
                             <CIcon icon={cilTrash} />
                           </CButton>
