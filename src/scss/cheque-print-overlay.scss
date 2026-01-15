@@ -1,0 +1,247 @@
+.cheque-print-overlay {
+    position: relative;
+    width: 210mm !important;
+    height: 99mm !important;
+    margin: 0;
+    padding: 0;
+    border: 2px solid #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    font-family: "Courier New", monospace;
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
+    background-position: top left !important;
+    transform: none !important;
+    .cheque-field {
+        color: #000000 !important;
+        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.9), -1px -1px 2px rgba(255, 255, 255, 0.9), 1px -1px 2px rgba(255, 255, 255, 0.9), -1px 1px 2px rgba(255, 255, 255, 0.9);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+.cheque-field {
+    position: absolute;
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    color: #000000 !important;
+    line-height: 1.2;
+    z-index: 10;
+    background-color: transparent !important;
+}
+
+.cheque-date-box {}
+
+.cheque-cross-lines {
+    pointer-events: none;
+}
+
+.cheque-cross-text {
+    pointer-events: none;
+}
+
+@media print {
+    @page {
+        size: 210mm 99mm;
+        margin: 0;
+        padding: 0;
+    }
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        color: black !important;
+        width: 210mm !important;
+        height: 99mm !important;
+        overflow: visible !important;
+    }
+    .cheque-preview-modal .c-modal-header,
+    .cheque-preview-modal .c-modal-footer,
+    .cheque-calibration-modal,
+    .calibration-field-indicator,
+    .calibration-grid,
+    .modal-backdrop,
+    button,
+    .btn,
+    .no-print,
+    header,
+    nav,
+    footer,
+    .alert,
+    .card,
+    .c-tabs,
+    .c-nav,
+    .c-tab-content {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    .c-modal-body,
+    .modal-body {
+        display: block !important;
+        visibility: visible !important;
+        position: relative !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: white !important;
+    }
+    #cheque-print-only,
+    .cheque-print-overlay-container,
+    .cheque-preview-container .cheque-print-overlay-container,
+    .c-modal-body .cheque-print-overlay-container,
+    .modal-body .cheque-print-overlay-container {
+        display: block !important;
+        visibility: visible !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 210mm !important;
+        height: 99mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        overflow: visible !important;
+    }
+    .cheque-preview-container {
+        display: block !important;
+        visibility: visible !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 210mm !important;
+        height: 99mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        overflow: visible !important;
+    }
+    .cheque-print-overlay {
+        position: relative !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 210mm !important;
+        height: 99mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background-image: none !important;
+        background-color: white !important;
+        transform: none !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        overflow: visible !important;
+    }
+    .cheque-field {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        color: #000000 !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border: none !important;
+        text-shadow: none !important;
+        position: absolute !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    .cheque-date-d1,
+    .cheque-date-d2,
+    .cheque-date-m1,
+    .cheque-date-m2,
+    .cheque-date-y3,
+    .cheque-date-y4 {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        color: #000000 !important;
+    }
+    .cheque-payee,
+    .cheque-amount-words,
+    .cheque-amount-figures,
+    .cheque-signature,
+    .cheque-account-number,
+    .cheque-company-name {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        color: #000000 !important;
+    }
+    .cheque-print-overlay *,
+    .cheque-print-overlay-container *,
+    .cheque-print-overlay div,
+    .cheque-print-overlay span {
+        visibility: visible !important;
+        color: #000000 !important;
+    }
+    .cheque-print-overlay::before,
+    .cheque-print-overlay::after {
+        display: none !important;
+        content: none !important;
+    }
+}
+
+@media screen {
+    .cheque-preview-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background: #f5f5f5;
+        border-radius: 8px;
+        overflow: hidden !important;
+        width: 100%;
+        min-height: 400px;
+        max-height: 100vh;
+    }
+    .cheque-preview-container .cheque-print-overlay {
+        transform: none !important;
+        margin: 0 auto;
+        background-size: 100% 100% !important;
+        background-position: top left !important;
+        background-repeat: no-repeat !important;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        image-rendering: pixelated;
+        width: 210mm !important;
+        height: 99mm !important;
+    }
+}
+
+.cheque-payee {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.cheque-amount-figures {
+    font-weight: bold;
+    text-align: right;
+}
+
+.cheque-amount-words {
+    font-style: italic;
+}
+
+.cheque-company-name {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.no-print {
+    @media print {
+        display: none !important;
+    }
+}
+
+.print-only {
+    display: none;
+    @media print {
+        display: block !important;
+    }
+}

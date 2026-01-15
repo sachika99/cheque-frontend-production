@@ -17,7 +17,6 @@ import CIcon from '@coreui/icons-react'
 import * as icon from '@coreui/icons'
 import authService from '../../../api/authservices/authService'
 import EmailVerificationModal from '../emailVerify/EmailVerificationModal'
-import { Eye, EyeOff } from 'lucide-react'
 
 const Register = () => {
   const [showForgotModal, setShowForgotModal] = useState(false)
@@ -204,7 +203,7 @@ const Register = () => {
                           userSelect: 'none',
                         }}
                       >
-                        {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                        {showPassword ? '👁️' : '👁️‍🗨️'}
                       </CInputGroupText>
                     </CInputGroup>
                   </div>
@@ -235,7 +234,7 @@ const Register = () => {
                           userSelect: 'none',
                         }}
                       >
-                        {showConfirmPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                        {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
                       </CInputGroupText>
                     </CInputGroup>
                   </div>

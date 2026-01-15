@@ -256,6 +256,7 @@ const BankForm = () => {
                   <option value="HNB">Hatton National Bank</option>
                   <option value="Commercial Bank">Commercial Bank</option>
                   <option value="Sampath Bank">Sampath Bank</option>
+                  <option value="Seylan Bank">Seylan Bank</option>
                 </CFormSelect>
               </CCol>
             </CRow>
@@ -280,11 +281,10 @@ const BankForm = () => {
                 <CIcon icon={cilPlus} className="me-2" />
                 Add Bank Account
               </CButton>
-            ):(
+            ) : (
               <div className="border rounded p-30 mb-40">
                 <div className="d-flex justify-content-between mb-3">
                   <h6 className="fw-bold">Add Bank Account</h6>
-
                 </div>
 
                 <CRow className="mb-3">

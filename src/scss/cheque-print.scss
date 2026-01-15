@@ -1,0 +1,134 @@
+.cheque-preview-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.cheque-template-front {
+    background-color: #fff;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+.cheque-template-front>div>div {
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+.cheque-date-box {
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    background-color: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.cheque-text-line {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: 'nowrap';
+    max-width: 100%;
+}
+
+.cheque-amount-box {
+    border: 1px dashed #666;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 2px;
+}
+
+.cheque-cross-mark {
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: rgba(255, 255, 255, 0.9);
+    transform-origin: top left;
+}
+
+@media print {
+    @page {
+        size: 177.8mm 88.9mm;
+        margin: 0;
+    }
+    body * {
+        visibility: hidden;
+    }
+    .seylan-cheque-print,
+    .seylan-cheque-print * {
+        visibility: visible !important;
+    }
+    .seylan-cheque-print {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 177.8mm !important;
+        height: 88.9mm !important;
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+        page-break-after: always;
+        background-color: #fff !important;
+        background-image: none !important;
+        transform: scale(0.0889);
+        transform-origin: top left;
+    }
+    .cheque-template-front,
+    .cheque-template-back,
+    .cheque-preview-container,
+    .cheque-preview-modal {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    .cheque-print-field {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        color-adjust: exact;
+        background-color: transparent !important;
+        border: none !important;
+    }
+    * {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+}
+
+@media screen {
+    .cheque-template-front {
+        border: 2px solid #333;
+        max-width: 800px;
+        max-height: 330px;
+    }
+}
+
+.cheque-field {
+    position: absolute;
+    font-family: 'Courier New', 'Arial', sans-serif;
+    color: #000;
+    line-height: 1.2;
+}
+
+.cheque-amount {
+    font-weight: bold;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.cheque-payee {
+    font-weight: bold;
+    font-size: 15px;
+    text-transform: uppercase;
+}
+
+.cheque-words {
+    font-style: italic;
+    font-size: 13px;
+}
+
+.cheque-words-row {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
