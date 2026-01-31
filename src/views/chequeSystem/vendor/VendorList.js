@@ -23,20 +23,30 @@ import {
   CModalBody,
   CModalFooter,
 } from '@coreui/react'
-import { cilSearch, cilPlus, cilPencil, cilTrash, cilCheck, cilX } from '@coreui/icons'
+import {
+  cilSearch,
+  cilPlus,
+  cilPencil,
+  cilTrash,
+  cilCheck,
+  cilX,
+} from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-// import vendorService from '../../../api/services/vendorService'
 import { useNavigate } from 'react-router-dom'
 import vendorService from '../../../api/services/VendorServices/vendorService'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const VendorList = () => {
   const navigate = useNavigate()
+
+  /* ================= STATE ================= */
   const [vendors, setVendors] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize] = useState(10)
   const [totalCount, setTotalCount] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [deleteModal, setDeleteModal] = useState(false)
@@ -51,10 +61,12 @@ const VendorList = () => {
     4: { label: 'Blacklisted', color: 'danger' },
   }
 
+  /* ================= EFFECT ================= */
   useEffect(() => {
     fetchVendors()
   }, [currentPage, pageSize, searchTerm, statusFilter])
 
+  /* ================= FETCH ================= */
   const fetchVendors = async () => {
     setLoading(true)
     try {
@@ -76,6 +88,7 @@ const VendorList = () => {
     }
   }
 
+  /* ================= ACTIONS ================= */
   const handleDelete = (vendor) => {
     setSelectedVendor(vendor)
     setDeleteModal(true)
@@ -83,12 +96,10 @@ const VendorList = () => {
 
   const confirmDelete = async () => {
     if (!selectedVendor) return
-
     try {
       await vendorService.deleteVendor(selectedVendor.id)
       showMessage('success', 'Vendor deleted successfully')
       setDeleteModal(false)
-      setSelectedVendor(null)
       fetchVendors()
     } catch (error) {
       showMessage('danger', error.message || 'Failed to delete vendor')
@@ -112,7 +123,33 @@ const VendorList = () => {
 
   const showMessage = (type, text) => {
     setMessage({ type, text })
-    setTimeout(() => setMessage({ type: '', text: '' }), 5000)
+    
+    // Toast notification with custom styling
+    if (type === 'success') {
+      toast.success(text, {
+        icon: "✓",
+        style: {
+          background: '#10b981',
+          color: '#ffffff',
+          fontWeight: '500',
+          fontSize: '15px',
+          borderRadius: '8px',
+        },
+      })
+    } else if (type === 'danger') {
+      toast.error(text, {
+        icon: "✕",
+        style: {
+          background: '#ef4444',
+          color: '#ffffff',
+          fontWeight: '500',
+          fontSize: '15px',
+          borderRadius: '8px',
+        },
+      })
+    }
+    
+    setTimeout(() => setMessage({ type: '', text: '' }), 4000)
   }
 
   const handleSearch = () => {
@@ -126,33 +163,46 @@ const VendorList = () => {
     setCurrentPage(1)
   }
 
+  /* ================= UI ================= */
   return (
     <>
+      <ToastContainer 
+        position="top-right" 
+        autoClose={2300} 
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <CCard className="mb-4">
-        <CCardHeader>
-          <div className="d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Vendor Management</h5>
-            <CButton color="primary" onClick={() => navigate('/vendors/create')}>
-              <CIcon icon={cilPlus} className="me-2" />
-              Add New Vendor
-            </CButton>
-          </div>
+        <CCardHeader className="d-flex justify-content-between align-items-center">
+          <h5 className="mb-0">Vendor Management</h5>
+          <CButton color="primary" onClick={() => navigate('/vendors/create')}>
+            <CIcon icon={cilPlus} className="me-2" />
+            Add New Vendor
+          </CButton>
         </CCardHeader>
+
         <CCardBody>
-          {message.text && (
+          {/* {message.text && (
             <div className={`alert alert-${message.type}`} role="alert">
               {message.text}
             </div>
-          )}
- 
+          )} */}
+
+          {/* SEARCH & FILTER */}
           <div className="row mb-3">
             <div className="col-md-4">
               <CInputGroup>
                 <CFormInput
-                  placeholder="Search by name or code..."
+                  placeholder="Search vendor name..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
                 <CButton color="secondary" variant="outline" onClick={handleSearch}>
                   <CIcon icon={cilSearch} />
@@ -180,98 +230,99 @@ const VendorList = () => {
               </CButton>
             </div>
           </div>
- 
+
+          {/* TABLE */}
           {loading ? (
             <div className="text-center py-5">
               <CSpinner color="primary" />
             </div>
           ) : (
             <>
-              <CTable align="middle" className="mb-0 border" hover responsive>
+              <CTable hover responsive className="border">
                 <CTableHead color="light">
                   <CTableRow>
-                    <CTableHeaderCell className="text-center">Code</CTableHeaderCell>
                     <CTableHeaderCell>Vendor Name</CTableHeaderCell>
                     <CTableHeaderCell>Phone</CTableHeaderCell>
-                    <CTableHeaderCell>Payment Time</CTableHeaderCell>
-                    <CTableHeaderCell>Email</CTableHeaderCell>
+                    <CTableHeaderCell>Credit Period (Days)</CTableHeaderCell>
                     <CTableHeaderCell className="text-center">Status</CTableHeaderCell>
-                    <CTableHeaderCell className="text-center">Payment Ready</CTableHeaderCell>
                     <CTableHeaderCell className="text-center">Actions</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
+
                 <CTableBody>
                   {vendors.length === 0 ? (
                     <CTableRow>
-                      <CTableDataCell colSpan="7" className="text-center py-4">
+                      <CTableDataCell colSpan="5" className="text-center py-4">
                         No vendors found
                       </CTableDataCell>
                     </CTableRow>
                   ) : (
                     vendors.map((vendor) => (
                       <CTableRow key={vendor.id}>
-                        <CTableDataCell className="text-center">
-                          <strong>{vendor.vendorCode}</strong>
+                        <CTableDataCell className="fw-semibold">
+                          {vendor.vendorName}
                         </CTableDataCell>
                         <CTableDataCell>
-                          <div className="fw-semibold">{vendor.vendorName}</div>
+                          {vendor.vendorPhoneNo || '-'}
                         </CTableDataCell>
-                        <CTableDataCell>{vendor.vendorPhoneNo || '-'}</CTableDataCell>
-                          <CTableDataCell>
-                            <span className="badge bg-info text-dark px-2 py-1">
-                              {vendor.crediPeriodDays || '-'}
-                            </span>
-                          </CTableDataCell>
-                        <CTableDataCell>{vendor.vendorEmail || '-'}</CTableDataCell>
-                        <CTableDataCell className="text-center">
-                          <CBadge color={VENDOR_STATUS[vendor.status]?.color || 'secondary'}>
-                            {vendor.statusDisplayName || VENDOR_STATUS[vendor.status]?.label || 'Unknown'}
+                        <CTableDataCell>
+                          <CBadge color="info">
+                            {vendor.crediPeriodDays ?? '-'}
                           </CBadge>
                         </CTableDataCell>
                         <CTableDataCell className="text-center">
-                          {vendor.canReceivePayments ? (
-                            <CIcon icon={cilCheck} className="text-success" size="lg" />
-                          ) : (
-                            <CIcon icon={cilX} className="text-danger" size="lg" />
-                          )}
+                          <CBadge
+                            color={
+                              VENDOR_STATUS[vendor.status]?.color || 'secondary'
+                            }
+                          >
+                            {vendor.statusDisplayName ||
+                              VENDOR_STATUS[vendor.status]?.label}
+                          </CBadge>
                         </CTableDataCell>
                         <CTableDataCell className="text-center">
                           <CButton
+                            size="sm"
                             color="primary"
                             variant="outline"
-                            size="sm"
                             className="me-2"
-                            onClick={() => navigate(`/vendors/edit/${vendor.id}`)}
+                            onClick={() =>
+                              navigate(`/vendors/edit/${vendor.id}`)
+                            }
                           >
                             <CIcon icon={cilPencil} />
                           </CButton>
+
                           {vendor.status === 1 ? (
                             <CButton
+                              size="sm"
                               color="warning"
                               variant="outline"
-                              size="sm"
                               className="me-2"
-                              onClick={() => handleStatusChange(vendor.id, 'deactivate')}
-                              title="Deactivate"
+                              onClick={() =>
+                                handleStatusChange(vendor.id, 'deactivate')
+                              }
                             >
                               <CIcon icon={cilX} />
                             </CButton>
                           ) : (
                             <CButton
+                              size="sm"
                               color="success"
                               variant="outline"
-                              size="sm"
                               className="me-2"
-                              onClick={() => handleStatusChange(vendor.id, 'activate')}
-                              title="Activate"
+                              onClick={() =>
+                                handleStatusChange(vendor.id, 'activate')
+                              }
                             >
                               <CIcon icon={cilCheck} />
                             </CButton>
                           )}
+
                           <CButton
+                            size="sm"
                             color="danger"
                             variant="outline"
-                            size="sm"
                             onClick={() => handleDelete(vendor)}
                           >
                             <CIcon icon={cilTrash} />
@@ -282,12 +333,13 @@ const VendorList = () => {
                   )}
                 </CTableBody>
               </CTable>
- 
+
               {totalPages > 1 && (
                 <div className="d-flex justify-content-between align-items-center mt-3">
                   <div>
                     Showing {(currentPage - 1) * pageSize + 1} to{' '}
-                    {Math.min(currentPage * pageSize, totalCount)} of {totalCount} vendors
+                    {Math.min(currentPage * pageSize, totalCount)} of{' '}
+                    {totalCount} vendors
                   </div>
                   <CPagination>
                     <CPaginationItem
@@ -296,30 +348,15 @@ const VendorList = () => {
                     >
                       Previous
                     </CPaginationItem>
-                    {[...Array(totalPages)].map((_, index) => {
-                      const page = index + 1
-                      if (
-                        page === 1 ||
-                        page === totalPages ||
-                        (page >= currentPage - 2 && page <= currentPage + 2)
-                      ) {
-                        return (
-                          <CPaginationItem
-                            key={page}
-                            active={page === currentPage}
-                            onClick={() => setCurrentPage(page)}
-                          >
-                            {page}
-                          </CPaginationItem>
-                        )
-                      } else if (
-                        page === currentPage - 3 ||
-                        page === currentPage + 3
-                      ) {
-                        return <CPaginationItem key={page}>...</CPaginationItem>
-                      }
-                      return null
-                    })}
+                    {[...Array(totalPages)].map((_, i) => (
+                      <CPaginationItem
+                        key={i + 1}
+                        active={currentPage === i + 1}
+                        onClick={() => setCurrentPage(i + 1)}
+                      >
+                        {i + 1}
+                      </CPaginationItem>
+                    ))}
                     <CPaginationItem
                       disabled={currentPage === totalPages}
                       onClick={() => setCurrentPage(currentPage + 1)}
@@ -333,14 +370,16 @@ const VendorList = () => {
           )}
         </CCardBody>
       </CCard>
- 
+
+      {/* DELETE MODAL */}
       <CModal visible={deleteModal} onClose={() => setDeleteModal(false)}>
         <CModalHeader>
           <CModalTitle>Confirm Delete</CModalTitle>
         </CModalHeader>
         <CModalBody>
           Are you sure you want to delete vendor{' '}
-          <strong>{selectedVendor?.vendorName}</strong>? This action cannot be undone.
+          <strong>{selectedVendor?.vendorName}</strong>? This action cannot be
+          undone.
         </CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setDeleteModal(false)}>

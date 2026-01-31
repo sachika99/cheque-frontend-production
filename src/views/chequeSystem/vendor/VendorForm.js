@@ -17,6 +17,8 @@ import { cilArrowLeft, cilSave } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import vendorService from '../../../api/services/VendorServices/vendorService'
 import { useNavigate, useParams } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const VendorForm = () => {
   const navigate = useNavigate()
@@ -30,14 +32,14 @@ const VendorForm = () => {
   const [formData, setFormData] = useState({
     vendorCode: '',
     vendorName: '',
-    vendorAddress: '',
+    vendorAddress: 'ADDRESs',
     vendorPhoneNo: '',
-    vendorEmail: '',
-    bankName: '',
-    accountNumber: '',
+    vendorEmail: 'vendor@gmail.com',
+    bankName: 'BANK_NAME',
+    accountNumber: '0000000000',
     crediPeriodDays: '',
-    contactPerson: '',
-    notes: '',
+    contactPerson: 'CONTACTPERON',
+    notes: 'active',
     status: 1, 
   })
 
@@ -130,17 +132,12 @@ const VendorForm = () => {
       newErrors.vendorName = 'Vendor name must be at least 3 characters'
     }
  
-    if (formData.vendorEmail && !isValidEmail(formData.vendorEmail)) {
-      newErrors.vendorEmail = 'Invalid email format (e.g., user@example.com)'
-    }
  
     if (formData.vendorPhoneNo && !isValidPhone(formData.vendorPhoneNo)) {
       newErrors.vendorPhoneNo = 'Invalid phone number format'
     }
  
-    if (formData.accountNumber && formData.accountNumber.trim().length < 3) {
-      newErrors.accountNumber = 'Account number must be at least 3 characters'
-    }
+   
  
     if (formData.crediPeriodDays && (parseInt(formData.crediPeriodDays) < 0 || parseInt(formData.crediPeriodDays) > 365)) {
       newErrors.crediPeriodDays = 'Credit period must be between 0 and 365 days'
@@ -196,6 +193,32 @@ const VendorForm = () => {
 
   const showMessage = (type, text) => {
     setMessage({ type, text })
+    
+    // Toast notification with custom styling
+    if (type === 'success') {
+      toast.success(text, {
+        icon: "✓",
+        style: {
+          background: '#10b981',
+          color: '#ffffff',
+          fontWeight: '500',
+          fontSize: '15px',
+          borderRadius: '8px',
+        },
+      })
+    } else if (type === 'danger') {
+      toast.error(text, {
+        icon: "✕",
+        style: {
+          background: '#ef4444',
+          color: '#ffffff',
+          fontWeight: '500',
+          fontSize: '15px',
+          borderRadius: '8px',
+        },
+      })
+    }
+    
     setTimeout(() => setMessage({ type: '', text: '' }), 5000)
   }
 
@@ -208,238 +231,177 @@ const VendorForm = () => {
   }
 
   return (
-    <CCard className="mb-4">
-      <CCardHeader>
-        <div className="d-flex justify-content-between align-items-center">
-          <h5 className="mb-0">{isEditMode ? 'Edit Vendor' : 'Add New Vendor'}</h5>
-          <CButton color="secondary" variant="outline" onClick={() => navigate('/vendors')}>
-            <CIcon icon={cilArrowLeft} className="me-2" />
-            Back to List
-          </CButton>
-        </div>
-      </CCardHeader>
-      <CCardBody>
-        {message.text && (
-          <div className={`alert alert-${message.type} mb-3`} role="alert">
-            {message.text}
+    <>
+       <ToastContainer position="top-right" autoClose={2300} theme="colored" draggable />
+       
+      <CCard className="mb-4">
+        <CCardHeader>
+          <div className="d-flex justify-content-between align-items-center">
+            <h5 className="mb-0">{isEditMode ? 'Edit Vendor' : 'Add New Vendor'}</h5>
+            <CButton color="secondary" variant="outline" onClick={() => navigate('/vendors')}>
+              <CIcon icon={cilArrowLeft} className="me-2" />
+              Back to List
+            </CButton>
           </div>
-        )}
+        </CCardHeader>
+        <CCardBody>
+          {/* {message.text && (
+            <div className={`alert alert-${message.type} mb-3`} role="alert">
+              {message.text}
+            </div>
+          )} */}
 
-        <CForm onSubmit={handleSubmit}>
-          <CRow>
-            <CCol md={6}>
-              <div className="mb-3">
-                <CFormLabel>
-                  Vendor Code {isEditMode && <span className="text-danger">*</span>}
-                  {!isEditMode && <span className="text-success">Auto-generated</span>}
-                </CFormLabel>
-                <CFormInput
-                  type="text"
-                  name="vendorCode"
-                  value={!isEditMode ? nextVendorCode : formData.vendorCode}
-                  onChange={handleChange}
-                  invalid={!!errors.vendorCode}
-                  disabled={true}
-                  readOnly={true}
-                  className="bg-light"
-                />
-                {!isEditMode && fetchingCode && (
-                  <div className="text-muted small mt-1">
-                    <CSpinner size="sm" className="me-1" />
-                    Fetching next vendor code...
-                  </div>
-                )}
-                {errors.vendorCode && (
-                  <div className="text-danger small mt-1">{errors.vendorCode}</div>
-                )}
-              </div>
-            </CCol>
-
-            <CCol md={6}>
-              <div className="mb-3">
-                <CFormLabel>
-                  Vendor Name <span className="text-danger">*</span>
-                </CFormLabel>
-                <CFormInput
-                  type="text"
-                  name="vendorName"
-                  value={formData.vendorName}
-                  onChange={handleChange}
-                  invalid={!!errors.vendorName}
-                />
-                {errors.vendorName && (
-                  <div className="text-danger small mt-1">{errors.vendorName}</div>
-                )}
-              </div>
-            </CCol>
-          </CRow>
-
-          <CRow>
-            <CCol md={12}>
-              <div className="mb-3">
-                <CFormLabel>Address</CFormLabel>
-                <CFormTextarea
-                  name="vendorAddress"
-                  value={formData.vendorAddress}
-                  onChange={handleChange}
-                  rows="2"
-                />
-              </div>
-            </CCol>
-          </CRow>
-
-          <CRow>
-            <CCol md={6}>
-              <div className="mb-3">
-                <CFormLabel>Phone Number</CFormLabel>
-                <CFormInput
-                  type="text"
-                  name="vendorPhoneNo"
-                  value={formData.vendorPhoneNo}
-                  onChange={handleChange}
-                  invalid={!!errors.vendorPhoneNo}
-                />
-                {errors.vendorPhoneNo && (
-                  <div className="text-danger small mt-1">{errors.vendorPhoneNo}</div>
-                )}
-              </div>
-            </CCol>
-
-            <CCol md={6}>
-              <div className="mb-3">
-                <CFormLabel>Email</CFormLabel>
-                <CFormInput
-                  type="email"
-                  name="vendorEmail"
-                  value={formData.vendorEmail}
-                  onChange={handleChange}
-                  invalid={!!errors.vendorEmail}
-                />
-                {errors.vendorEmail && (
-                  <div className="text-danger small mt-1">{errors.vendorEmail}</div>
-                )}
-              </div>
-            </CCol>
-          </CRow>
-
-          <CRow>
-            <CCol md={6}>
-              <div className="mb-3">
-                <CFormLabel>Bank Name</CFormLabel>
-                <CFormInput
-                  type="text"
-                  name="bankName"
-                  value={formData.bankName}
-                  onChange={handleChange}
-                />
-              </div>
-            </CCol>
-
-            <CCol md={6}>
-              <div className="mb-3">
-                <CFormLabel>Account Number</CFormLabel>
-                <CFormInput
-                  type="text"
-                  name="accountNumber"
-                  value={formData.accountNumber}
-                  onChange={handleChange}
-                  invalid={!!errors.accountNumber}
-                />
-                {errors.accountNumber && (
-                  <div className="text-danger small mt-1">{errors.accountNumber}</div>
-                )}
-              </div>
-            </CCol>
-          </CRow>
-
-          <CRow>
-            <CCol md={6}>
-              <div className="mb-3">
-                <CFormLabel>Credit Period (Days)</CFormLabel>
-                <CFormInput
-                  type="number"
-                  name="crediPeriodDays"
-                  value={formData.crediPeriodDays}
-                  onChange={handleChange}
-                  min="0"
-                  max="365"
-                  invalid={!!errors.crediPeriodDays}
-                />
-                {errors.crediPeriodDays && (
-                  <div className="text-danger small mt-1">{errors.crediPeriodDays}</div>
-                )}
-              </div>
-            </CCol>
-
-            <CCol md={6}>
-              <div className="mb-3">
-                <CFormLabel>Contact Person</CFormLabel>
-                <CFormInput
-                  type="text"
-                  name="contactPerson"
-                  value={formData.contactPerson}
-                  onChange={handleChange}
-                />
-              </div>
-            </CCol>
-          </CRow>
-
-          {isEditMode && (
+          <CForm onSubmit={handleSubmit}>
             <CRow>
               <CCol md={6}>
                 <div className="mb-3">
-                  <CFormLabel>Status</CFormLabel>
-                  <CFormSelect name="status" value={formData.status} onChange={handleChange}>
-                    <option value="1">Active</option>
-                    <option value="2">Inactive</option>
-                    <option value="3">Suspended</option>
-                    <option value="4">Blacklisted</option>
-                  </CFormSelect>
+                  <CFormLabel>
+                    Vendor Code {isEditMode && <span className="text-danger">*</span>}
+                    {!isEditMode && <span className="text-success">Auto-generated</span>}
+                  </CFormLabel>
+                  <CFormInput
+                    type="text"
+                    name="vendorCode"
+                    value={!isEditMode ? nextVendorCode : formData.vendorCode}
+                    onChange={handleChange}
+                    invalid={!!errors.vendorCode}
+                    disabled={true}
+                    readOnly={true}
+                  />
+                  {!isEditMode && fetchingCode && (
+                    <div className="text-muted small mt-1">
+                      <CSpinner size="sm" className="me-1" />
+                      Fetching next vendor code...
+                    </div>
+                  )}
+                  {errors.vendorCode && (
+                    <div className="text-danger small mt-1">{errors.vendorCode}</div>
+                  )}
                 </div>
               </CCol>
+
+            
             </CRow>
-          )}
 
-          <CRow>
-            <CCol md={12}>
-              <div className="mb-3">
-                <CFormLabel>Notes</CFormLabel>
-                <CFormTextarea
-                  name="notes"
-                  value={formData.notes}
-                  onChange={handleChange}
-                  rows="3"
-                />
-              </div>
-            </CCol>
-          </CRow>
+            <CRow>
+                <CCol md={6}>
+                <div className="mb-3">
+                  <CFormLabel>
+                    Vendor Name <span className="text-danger">*</span>
+                  </CFormLabel>
+                  <CFormInput
+                    type="text"
+                    name="vendorName"
+                    value={formData.vendorName}
+                    onChange={handleChange}
+                    invalid={!!errors.vendorName}
+                  />
+                  {errors.vendorName && (
+                    <div className="text-danger small mt-1">{errors.vendorName}</div>
+                  )}
+                </div>
+              </CCol>
+              <CCol md={6}>
+                <div className="mb-3">
+                  <CFormLabel>Phone Number</CFormLabel>
+                  <CFormInput
+                    type="text"
+                    name="vendorPhoneNo"
+                    value={formData.vendorPhoneNo}
+                    onChange={handleChange}
+                    invalid={!!errors.vendorPhoneNo}
+                     maxLength={10}
+                  />
+                  {errors.vendorPhoneNo && (
+                    <div className="text-danger small mt-1">{errors.vendorPhoneNo}</div>
+                  )}
+                </div>
+              </CCol>
 
-          <div className="d-flex justify-content-end gap-2">
-            <CButton
-              color="secondary"
-              variant="outline"
-              onClick={() => navigate('/vendors')}
-              disabled={submitting}
-            >
-              Cancel
-            </CButton>
-            <CButton color="primary" type="submit" disabled={submitting}>
-              {submitting ? (
-                <>
-                  <CSpinner size="sm" className="me-2" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <CIcon icon={cilSave} className="me-2" />
-                  {isEditMode ? 'Update Vendor' : 'Create Vendor'}
-                </>
-              )}
-            </CButton>
-          </div>
-        </CForm>
-      </CCardBody>
-    </CCard>
+              {/* <CCol md={6}>
+                <div className="mb-3">
+                  <CFormLabel>Email</CFormLabel>
+                  <CFormInput
+                    type="email"
+                    name="vendorEmail"
+                    value={formData.vendorEmail}
+                    onChange={handleChange}
+                    invalid={!!errors.vendorEmail}
+                  />
+                  {errors.vendorEmail && (
+                    <div className="text-danger small mt-1">{errors.vendorEmail}</div>
+                  )}
+                </div>
+              </CCol> */}
+            </CRow>
+  {/*  */}
+
+            <CRow>
+              <CCol md={6}>
+                <div className="mb-3">
+                  <CFormLabel>Credit Period (Days)</CFormLabel>
+                  <CFormInput
+                    type="number"
+                    name="crediPeriodDays"
+                    value={formData.crediPeriodDays}
+                    onChange={handleChange}
+                    min="0"
+                    max="365"
+                    invalid={!!errors.crediPeriodDays}
+                  />
+                  {errors.crediPeriodDays && (
+                    <div className="text-danger small mt-1">{errors.crediPeriodDays}</div>
+                  )}
+                </div>
+              </CCol>
+
+            </CRow>
+
+            {isEditMode && (
+              <CRow>
+                <CCol md={6}>
+                  <div className="mb-3">
+                    <CFormLabel>Status</CFormLabel>
+                    <CFormSelect name="status" value={formData.status} onChange={handleChange}>
+                      <option value="1">Active</option>
+                      <option value="2">Inactive</option>
+                      <option value="3">Suspended</option>
+                      <option value="4">Blacklisted</option>
+                    </CFormSelect>
+                  </div>
+                </CCol>
+              </CRow>
+            )}
+
+          
+
+            <div className="d-flex justify-content-end gap-2">
+              <CButton
+                color="secondary"
+                variant="outline"
+                onClick={() => navigate('/vendors')}
+                disabled={submitting}
+              >
+                Cancel
+              </CButton>
+              <CButton color="primary" type="submit" disabled={submitting}>
+                {submitting ? (
+                  <>
+                    <CSpinner size="sm" className="me-2" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <CIcon icon={cilSave} className="me-2" />
+                    {isEditMode ? 'Update Vendor' : 'Create Vendor'}
+                  </>
+                )}
+              </CButton>
+            </div>
+          </CForm>
+        </CCardBody>
+      </CCard>
+    </>
   )
 }
 

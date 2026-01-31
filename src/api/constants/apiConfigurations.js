@@ -23,6 +23,7 @@ export const API_CONFIGURATIONS = {
 
         BANKACCOUNT: '/BankAccounts',
         BANKACCOUNT_BY_ID: (id) => `/BankAccounts/${id}`,
+        BANK_STATUS: (id) => `/BankAccounts/${id}/activate`,
         
         CHEQUEBOOK: '/ChequeBooks',
         CHEQUEBOOK_BY_ID: (id) => `/ChequeBooks/${id}`,
@@ -30,6 +31,9 @@ export const API_CONFIGURATIONS = {
 
         CHEQUE: '/Cheques',
         CHEQUE_BY_ID: (id) => `/Cheques/${id}`,
+        CHEQUE_STATUS: (id) => `/Cheques/${id}/status`,
+          CHEQUE_STATUS_BULK: `/Cheques/status/bulk`,
+
 
         LOGIN_USER: `${BASE_URL}/login`,
         FORGOT_PASSWORD_USER: `${BASE_URL}/forgot-password`,

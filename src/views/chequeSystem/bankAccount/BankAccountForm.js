@@ -34,10 +34,11 @@ const [banks, setBanks] = useState([])
     bankName: '',
     accountNo: '',
     accountName: '',
-    accountType: '',
-    balance: '',
+    branchName:'',
+    accountType: 'Current',
+    balance: '10000',
     status: 'Active',
-    notes: '',
+    notes: 'NOTE',
   })
 
   const [errors, setErrors] = useState({})
@@ -61,6 +62,7 @@ const [banks, setBanks] = useState([])
       setFormData({
         bankId: acc.bankId || 0,
         bankName: acc.bankName || '',
+        branchName: acc.branchName || '',
         accountNo: acc.accountNo || '',
         accountName: acc.accountName || '',
         accountType: acc.accountType || '',
@@ -97,11 +99,7 @@ const fetchBanks = async () => {
   const validateForm = () => {
     const newErrors = {}
 
-    if (!formData.bankName.trim()) {
-      newErrors.bankName = 'Bank name is required'
-    } else if (formData.bankName.trim().length < 3) {
-      newErrors.bankName = 'Bank name must be at least 3 characters'
-    }
+    
 
     if (!formData.accountNo.trim()) {
       newErrors.accountNo = 'Account number is required'
@@ -109,11 +107,6 @@ const fetchBanks = async () => {
       newErrors.accountNo = 'Account number must be at least 3 characters'
     }
 
-    if (!formData.accountName.trim()) {
-      newErrors.accountName = 'Account name is required'
-    } else if (formData.accountName.trim().length < 3) {
-      newErrors.accountName = 'Account name must be at least 3 characters'
-    }
 
     if (!formData.accountType.trim()) {
       newErrors.accountType = 'Account type is required'
@@ -141,6 +134,7 @@ const fetchBanks = async () => {
       const payload = {
         ...formData,
         balance: formData.balance === '' ? 0 : Number(formData.balance),
+        branchName:"kandy"
       }
 
       if (isEditMode) {
@@ -205,20 +199,22 @@ return (
                 name="bankId"
                 value={formData.bankId}
                 onChange={(e) => {
-                  const selected = banks.find((b) => b.id == e.target.value)
-                  setFormData((prev) => ({
-                    ...prev,
-                    bankId: selected?.id,
-                    bankName: selected?.bankName || "",
-                  }))
-                }}
+  const selected = banks.find(b => b.id === Number(e.target.value))
+
+  setFormData(prev => ({
+    ...prev,
+    bankId: selected?.id ?? null,
+    branchName:selected.branchName
+  }))
+}}
+
                 className="w-100"
                 invalid={!!errors.bankId}
               >
                 <option value="">Select Bank</option>
                 {banks.map((bank) => (
                   <option key={bank.id} value={bank.id}>
-                    {bank.bankName}
+                    {bank.bankName} - {bank.branchName}
                   </option>
                 ))}
               </CFormSelect>
@@ -227,11 +223,7 @@ return (
                 <div className="text-danger small mt-1">{errors.bankId}</div>
               )}
             </CCol>
-          </CRow>
-
-          {/* Account No + Name */}
-          <CRow className="mb-4">
-            <CCol md={6}>
+            <CCol md={4}>
               <CFormLabel className="fw-medium">
                 Account Number <span className="text-danger">*</span>
               </CFormLabel>
@@ -246,7 +238,11 @@ return (
                 <div className="text-danger small mt-1">{errors.accountNo}</div>
               )}
             </CCol>
+            
+          </CRow>
 
+          {/* Account No + Name */}
+          <CRow className="mb-4">
             <CCol md={6}>
               <CFormLabel className="fw-medium">
                 Account Name <span className="text-danger">*</span>
@@ -262,11 +258,7 @@ return (
                 <div className="text-danger small mt-1">{errors.accountName}</div>
               )}
             </CCol>
-          </CRow>
-
-          {/* Account Type + Balance */}
-          <CRow className="mb-4">
-            <CCol md={6}>
+<CCol md={4}>
               <CFormLabel className="fw-medium">
                 Account Type <span className="text-danger">*</span>
               </CFormLabel>
@@ -286,21 +278,15 @@ return (
                 <div className="text-danger small mt-1">{errors.accountType}</div>
               )}
             </CCol>
-
-            <CCol md={6}>
-              <CFormLabel className="fw-medium">Balance</CFormLabel>
-              <CFormInput
-                type="number"
-                name="balance"
-                value={formData.balance}
-                onChange={handleChange}
-                invalid={!!errors.balance}
-              />
-              {errors.balance && (
-                <div className="text-danger small mt-1">{errors.balance}</div>
-              )}
-            </CCol>
+            
           </CRow>
+
+          {/* Account Type + Balance */}
+          {/* <CRow className="mb-4">
+            
+
+           
+          </CRow> */}
 
           {/* Status */}
           {isEditMode && (
@@ -320,17 +306,7 @@ return (
           )}
 
           {/* Notes */}
-          <CRow className="mb-4">
-            <CCol md={12}>
-              <CFormLabel className="fw-medium">Notes</CFormLabel>
-              <CFormTextarea
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                rows="3"
-              />
-            </CCol>
-          </CRow>
+      
 
           {/* Buttons */}
           <div className="d-flex justify-content-end gap-2 mt-2">

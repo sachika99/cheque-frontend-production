@@ -55,12 +55,12 @@ const _nav = [
     component: CNavTitle,
     name: 'Components',
   },
-  {
-        component: CNavItem,
-        name: 'Tables',
-        to: '/tables/maintable',
-        icon: <CIcon icon={cilSwapHorizontal} customClassName="nav-icon" />
-  },
+  // {
+  //       component: CNavItem,
+  //       name: 'Tables',
+  //       to: '/tables/maintable',
+  //       icon: <CIcon icon={cilSwapHorizontal} customClassName="nav-icon" />
+  // },
  {
   component: CNavItem,
   name: 'Vendors',
@@ -79,22 +79,22 @@ const _nav = [
   to: '/bankAccounts',
   icon: <CIcon icon={cilWallet} customClassName="nav-icon" />
 },
-{
-  component: CNavItem,
-  name: 'Cheque Book',
-  to: '/chequeBook',
-  icon: <CIcon icon={cilBook} customClassName="nav-icon" />
-},
+// {
+//   component: CNavItem,
+//   name: 'Cheque Book',
+//   to: '/chequeBook',
+//   icon: <CIcon icon={cilBook} customClassName="nav-icon" />
+// },
 {
   component: CNavItem,
   name: 'Cheque',
   to: '/cheque',
   icon: <CIcon icon={cilMoney} customClassName="nav-icon" />
 },
-{
-  component: CNavTitle,
-  name: 'COREUI',
-},
+// {
+//   component: CNavTitle,
+//   name: 'COREUI',
+// },
   // {
   //   component: CNavTitle,
   //   name: 'COREUI',

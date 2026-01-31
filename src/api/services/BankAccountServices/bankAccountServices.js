@@ -64,10 +64,11 @@ class BankAccountServices {
 
   async deleteBankAccount(id) {
     try {
+    
       await axiosInstance.delete(API_CONFIGURATIONS.ENDPOINTS.BANKACCOUNT_BY_ID(id))
       return true
     } catch (error) {
-      throw this.handleError(error)
+      return error
     }
   }
   async createBankAndAccount(BankAccountData) {
@@ -81,6 +82,18 @@ class BankAccountServices {
       throw this.handleError(error)
     }
   }
+async updateBankAccountStatus(chequeId) {
+  try {
+debugger
+    const response = await axiosInstance.patch(
+      API_CONFIGURATIONS.ENDPOINTS.BANK_STATUS(chequeId)
+    )
+
+    return response.data
+  } catch (error) {
+    throw this.handleError(error)
+  }
+}
 
   handleError(error) {
     if (error.response) {
@@ -94,5 +107,7 @@ class BankAccountServices {
     }
   }
 }
+
+
 
 export default new BankAccountServices()

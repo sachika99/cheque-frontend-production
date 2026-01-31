@@ -138,7 +138,6 @@ const BankAccountList = () => {
                   <CTableHeaderCell>Account Name</CTableHeaderCell>
                   <CTableHeaderCell>Bank Name</CTableHeaderCell>
                   <CTableHeaderCell>Type</CTableHeaderCell>
-                  <CTableHeaderCell>Balance</CTableHeaderCell>
                   <CTableHeaderCell className="text-center">Status</CTableHeaderCell>
                   <CTableHeaderCell className="text-center">Actions</CTableHeaderCell>
                 </CTableRow>
@@ -155,7 +154,6 @@ const BankAccountList = () => {
                       <CTableDataCell>{acc.accountName}</CTableDataCell>
                       <CTableDataCell>{acc.bankName}</CTableDataCell>
                       <CTableDataCell>{acc.accountType}</CTableDataCell>
-                      <CTableDataCell>{acc.balance}</CTableDataCell>
                       <CTableDataCell className="text-center">
                         <CBadge color={ACCOUNT_STATUS[acc.status]?.color}>
                           {ACCOUNT_STATUS[acc.status]?.label || acc.status}

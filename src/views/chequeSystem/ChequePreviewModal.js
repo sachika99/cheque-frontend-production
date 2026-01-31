@@ -43,10 +43,18 @@ const ChequePreviewModal = ({ visible, onClose, chequeData, onPrint }) => {
       existingPrintContainer.remove()
     }
     
-    const printContainer = document.createElement('div')
-    printContainer.id = 'cheque-print-only'
-    printContainer.className = 'cheque-print-overlay-container'
-    printContainer.style.cssText = 'position: absolute; left: -9999px; top: 0; width: 210mm; height: 99mm;'
+const printContainer = document.createElement('div')
+printContainer.id = 'cheque-print-only'
+printContainer.className = 'cheque-print-overlay-container'
+printContainer.style.cssText = `
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 203mm;
+  height: 92mm;
+  background: white;
+`
+
     document.body.appendChild(printContainer)
      
     const overlay = document.querySelector('.cheque-print-overlay')

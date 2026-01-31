@@ -29,7 +29,7 @@ const BankForm = () => {
   const [nextBankCode, setNextBankCode] = useState('BANK001')
 
   const [formData, setFormData] = useState({
-    id:0,
+    id: 0,
     bankName: '',
     branchName: '',
     branchCode: '',
@@ -166,16 +166,17 @@ const BankForm = () => {
 
       const payloadAccount = {
         ...accountForm,
-        bankName: formData.bankName,
+         bankName: `${formData.bankName} - ${formData.branchName}`,
       }
 
 
       const payload = {
         ...formData,
+        id: isEditMode ? id : 0,
         branchCode: isEditMode ? formData.branchCode : nextBankCode,
         bankAccounts: [payloadAccount],
       }
-
+debugger
       if (isEditMode) {
       await bankService.updateBank(id, payload)
       toast.success('Bank updated')
@@ -276,79 +277,75 @@ const BankForm = () => {
               </CCol>
             </CRow>
             <br></br>
-            {!showAccountForm ? (
-              <CButton color="info" type="button" onClick={() => setShowAccountForm(true)}>
-                <CIcon icon={cilPlus} className="me-2" />
-                Add Bank Account
-              </CButton>
-            ) : (
-              <div className="border rounded p-30 mb-40">
-                <div className="d-flex justify-content-between mb-3">
-                  <h6 className="fw-bold">Add Bank Account</h6>
-                </div>
+            {!isEditMode && (
+  !showAccountForm ? (
+    <CButton
+      color="info"
+      type="button"
+      onClick={() => setShowAccountForm(true)}
+    >
+      <CIcon icon={cilPlus} className="me-2" />
+      Add Bank Account
+    </CButton>
+  ) : (
+    <div className="border rounded p-3 mb-4">
+      <div className="d-flex justify-content-between mb-3">
+        <h6 className="fw-bold">Add Bank Account</h6>
+      </div>
 
-                <CRow className="mb-3">
-                  <CCol md={6}>
-                    <CFormLabel>Account Number</CFormLabel>
-                    <CFormInput
-                      name="accountNo"
-                      value={accountForm.accountNo}
-                      onChange={handleAccountChange}
-                    />
-                  </CCol>
+      <CRow className="mb-3">
+        <CCol md={6}>
+          <CFormLabel>Account Number</CFormLabel>
+          <CFormInput
+            name="accountNo"
+            value={accountForm.accountNo}
+            onChange={handleAccountChange}
+          />
+        </CCol>
 
-                  <CCol md={6}>
-                    <CFormLabel>Account Holder's Name</CFormLabel>
-                    <CFormInput
-                      name="accountName"
-                      value={accountForm.accountName}
-                      onChange={handleAccountChange}
-                    />
-                  </CCol>
-                </CRow>
+        <CCol md={6}>
+          <CFormLabel>Account Holder&apos;s Name</CFormLabel>
+          <CFormInput
+            name="accountName"
+            value={accountForm.accountName}
+            onChange={handleAccountChange}
+          />
+        </CCol>
+      </CRow>
 
-                <CRow className="mb-3">
-                  <CCol md={6}>
-                    <CFormLabel>Account Type</CFormLabel>
-                    <CFormSelect
-                      name="accountType"
-                      value={accountForm.accountType}
-                      onChange={handleAccountChange}
-                    >
-                      <option value="">Select Type</option>
-                      <option value="Savings">Savings</option>
-                      <option value="Current">Current</option>
-                      <option value="Fixed Deposit">Fixed Deposit</option>
-                    </CFormSelect>
-                  </CCol>
+      <CRow className="mb-3">
+        <CCol md={6}>
+          <CFormLabel>Account Type</CFormLabel>
+          <CFormSelect
+            name="accountType"
+            value={accountForm.accountType}
+            onChange={handleAccountChange}
+          >
+            <option value="">Select Type</option>
+            <option value="Savings">Savings</option>
+            <option value="Current">Current</option>
+            <option value="Fixed Deposit">Fixed Deposit</option>
+          </CFormSelect>
+        </CCol>
+      </CRow>
 
-                  <CCol md={6}>
-                    <CFormLabel>Balance</CFormLabel>
-                    <CFormInput
-                      type="number"
-                      name="balance"
-                      value={accountForm.balance}
-                      onChange={handleAccountChange}
-                    />
-                  </CCol>
-                </CRow>
+      <CFormLabel>Status</CFormLabel>
+      <CFormSelect
+        name="status"
+        value={accountForm.status}
+        onChange={handleAccountChange}
+        className="mb-3"
+      >
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+      </CFormSelect>
 
-                <CFormLabel>Status</CFormLabel>
-                <CFormSelect
-                  name="status"
-                  value={accountForm.status}
-                  onChange={handleAccountChange}
-                  className="mb-3"
-                >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </CFormSelect>
-
-                <CButton color="primary" onClick={() => setShowAccountForm(false)}>
-                  CLOSE
-                </CButton>
-              </div>
-            )}
+      <CButton color="primary" onClick={() => setShowAccountForm(false)}>
+        CLOSE
+      </CButton>
+    </div>
+  )
+)}
 
             <div className="d-flex justify-content-end gap-2 mt-3">
               <CButton color="secondary" variant="outline" onClick={() => navigate('/banks')}>

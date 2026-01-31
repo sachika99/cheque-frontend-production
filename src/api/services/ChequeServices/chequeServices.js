@@ -52,6 +52,7 @@ class ChequeServices {
 
   async updateCheque(id, bankData) {
     try {
+      debugger
       const response = await axiosInstance.put(
         API_CONFIGURATIONS.ENDPOINTS.CHEQUE_BY_ID(id),
         bankData,
@@ -59,6 +60,43 @@ class ChequeServices {
       return response.data
     } catch (error) {
       throw this.handleError(error)
+    }
+  }
+
+async updateChequeStatus(chequeId, newStatus, user) {
+  try {
+    const payload = {
+      newStatus: newStatus,
+      user: user,
+    }
+
+    const response = await axiosInstance.patch(
+      API_CONFIGURATIONS.ENDPOINTS.CHEQUE_STATUS(chequeId),
+      payload
+    )
+
+    return response.data
+  } catch (error) {
+    throw this.handleError(error)
+  }
+}
+
+async updateChequeStatusBulk(chequeIds, newStatus, user) {
+    try {
+      const payload = {
+        chequeIds: chequeIds,
+        newStatus: newStatus,
+        user: user,
+      }
+
+      const response = await axiosInstance.patch(
+        API_CONFIGURATIONS.ENDPOINTS.CHEQUE_STATUS_BULK,
+        payload
+      )
+
+      return response.data
+    } catch (error) {
+      throw error
     }
   }
 

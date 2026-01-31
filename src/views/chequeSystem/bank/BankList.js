@@ -236,7 +236,7 @@ const BankList = () => {
                 <CTableHeaderCell className="py-3 px-3">Branch Code</CTableHeaderCell>
                 <CTableHeaderCell className="py-3 px-3">Bank Name</CTableHeaderCell>
                 <CTableHeaderCell className="py-3 px-3">Branch</CTableHeaderCell>
-                <CTableHeaderCell className="text-center py-3 px-3">Status</CTableHeaderCell>
+                {/* <CTableHeaderCell className="text-center py-3 px-3">Status</CTableHeaderCell> */}
                 <CTableHeaderCell className="text-center py-3 px-3">Actions</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
@@ -255,11 +255,11 @@ const BankList = () => {
                       <CTableDataCell className="py-3 px-3">{bank.branchCode}</CTableDataCell>
                       <CTableDataCell className="py-3 px-3">{bank.bankName}</CTableDataCell>
                       <CTableDataCell className="py-3 px-3">{bank.branchName}</CTableDataCell>
-                      <CTableDataCell className="text-center py-3 px-3">
+                      {/* <CTableDataCell className="text-center py-3 px-3">
                         <CBadge color={BANK_STATUS[bank.status]?.color}>
                           {BANK_STATUS[bank.status]?.label}
                         </CBadge>
-                      </CTableDataCell>
+                      </CTableDataCell> */}
                       <CTableDataCell className="text-center py-3 px-3">
                         <CButton
                           color="primary"
@@ -307,7 +307,7 @@ const BankList = () => {
                                     Account Name
                                   </CTableHeaderCell>
                                   <CTableHeaderCell className="py-3 px-3">Type</CTableHeaderCell>
-                                  <CTableHeaderCell className="py-3 px-3">Balance</CTableHeaderCell>
+                                  {/* <CTableHeaderCell className="py-3 px-3">Balance</CTableHeaderCell> */}
                                   <CTableHeaderCell className="py-3 px-3">Status</CTableHeaderCell>
                                   <CTableHeaderCell className="py-3 px-3">Actions</CTableHeaderCell>
                                 </CTableRow>
@@ -359,7 +359,7 @@ const BankList = () => {
                                           </CFormSelect>
                                         </CTableDataCell>
 
-                                        <CTableDataCell className="py-3 px-3">
+                                        {/* <CTableDataCell className="py-3 px-3">
                                           <CFormInput
                                             type="number"
                                             value={editForm.balance}
@@ -370,7 +370,7 @@ const BankList = () => {
                                               }))
                                             }
                                           />
-                                        </CTableDataCell>
+                                        </CTableDataCell> */}
 
                                         <CTableDataCell className="py-3 px-3">
                                           <CFormSelect
@@ -406,9 +406,9 @@ const BankList = () => {
                                         <CTableDataCell className="py-3 px-3">
                                           {acc.accountType}
                                         </CTableDataCell>
-                                        <CTableDataCell className="py-3 px-3">
+                                        {/* <CTableDataCell className="py-3 px-3">
                                           {acc.balance}
-                                        </CTableDataCell>
+                                        </CTableDataCell> */}
                                         <CTableDataCell className="py-3 px-3">
                                           {acc.status}
                                         </CTableDataCell>
