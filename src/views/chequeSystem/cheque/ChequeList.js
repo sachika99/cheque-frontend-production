@@ -31,6 +31,8 @@ import {
   cilCloudDownload,
   cilCalculator,
   cilList,
+  cilXCircle,
+  cilCheckCircle,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import { ToastContainer, toast } from 'react-toastify'
@@ -71,15 +73,18 @@ const ChequeList = () => {
   const [invoiceModal, setInvoiceModal] = useState(false)
   const [invoiceModalCheque, setInvoiceModalCheque] = useState(null)
   // Invoice modal editable state
-const [editableInvoices, setEditableInvoices] = useState([])
-const [printData, setPrintData] = useState(false)
+  const [editableInvoices, setEditableInvoices] = useState([])
+  const [printData, setPrintData] = useState(false)
   const [chequeData, setChequeData] = useState({
     date: '',
     payee: '',
-    amount: ''
-    
+    amount: '',
+    cashCheque: false
   })
 
+  // ✅ NEW: Cash Cheque Confirmation Modal
+  const [cashChequeModal, setCashChequeModal] = useState(false)
+  const [pendingPrintData, setPendingPrintData] = useState(null)
 
   const STATUS = ['Pending', 'Issued', 'Cleared', 'Bounced']
 
@@ -134,31 +139,32 @@ const [printData, setPrintData] = useState(false)
       setLoading(false)
     }
   }
-const updateInvoiceField = (index, field, value) => {
-  setEditableInvoices((prev) =>
-    prev.map((inv, i) =>
-      i === index ? { ...inv, [field]: value } : inv
+
+  const updateInvoiceField = (index, field, value) => {
+    setEditableInvoices((prev) =>
+      prev.map((inv, i) =>
+        i === index ? { ...inv, [field]: value } : inv
+      )
     )
-  )
-}
+  }
 
-const addInvoiceRow = () => {
-  setEditableInvoices((prev) => [
-    ...prev,
-    { id: `tmp-${Date.now()}`, invoiceNo: '', invoiceAmount: 0 },
-  ])
-}
+  const addInvoiceRow = () => {
+    setEditableInvoices((prev) => [
+      ...prev,
+      { id: `tmp-${Date.now()}`, invoiceNo: '', invoiceAmount: 0 },
+    ])
+  }
 
-const deleteInvoiceRow = (index) => {
-  setEditableInvoices((prev) => prev.filter((_, i) => i !== index))
-}
+  const deleteInvoiceRow = (index) => {
+    setEditableInvoices((prev) => prev.filter((_, i) => i !== index))
+  }
 
-const invoiceModalTotal = useMemo(() => {
-  return editableInvoices.reduce((sum, inv) => {
-    const n = Number(String(inv.invoiceAmount || 0).replace(/,/g, ''))
-    return sum + (Number.isFinite(n) ? n : 0)
-  }, 0)
-}, [editableInvoices])
+  const invoiceModalTotal = useMemo(() => {
+    return editableInvoices.reduce((sum, inv) => {
+      const n = Number(String(inv.invoiceAmount || 0).replace(/,/g, ''))
+      return sum + (Number.isFinite(n) ? n : 0)
+    }, 0)
+  }, [editableInvoices])
 
   const updateStatus = async (chequeId, newStatus) => {
     try {
@@ -218,14 +224,30 @@ const invoiceModalTotal = useMemo(() => {
     }
     setBulkModal(true)
   }
-    const printCheque = (payeeName,chequeAmount,dueDate) => {
-      setChequeData(prev => ({
-        ...prev,
-        payee: payeeName,
-        amount: String(chequeAmount),
-        date: dueDate.split("T")[0]
-      }))
+
+  // ✅ UPDATED: Open modal first, then print
+  const printCheque = (payeeName, chequeAmount, dueDate) => {
+    setPendingPrintData({
+      payeeName,
+      chequeAmount,
+      dueDate
+    })
+    setCashChequeModal(true)
+  }
+
+  // ✅ NEW: Handle cash cheque confirmation
+  const handleCashChequeConfirm = (isCashCheque) => {
+    if (pendingPrintData) {
+      setChequeData({
+        payee: pendingPrintData.payeeName,
+        amount: String(pendingPrintData.chequeAmount),
+        date: pendingPrintData.dueDate.split("T")[0],
+        cashCheque: isCashCheque
+      })
       setPrintData(true)
+    }
+    setCashChequeModal(false)
+    setPendingPrintData(null)
   }
 
   const bulkIssueAll = async () => {
@@ -284,21 +306,20 @@ const invoiceModalTotal = useMemo(() => {
   }
 
   /* ================= INVOICE MODAL ================= */
-const openInvoiceModal = (cheque) => {
-  const list = Array.isArray(cheque?.invoices) ? cheque.invoices : []
+  const openInvoiceModal = (cheque) => {
+    const list = Array.isArray(cheque?.invoices) ? cheque.invoices : []
 
-  setEditableInvoices(
-    list.map((inv) => ({
-      id: inv.id,
-      invoiceNo: inv.invoiceNo || '',
-      invoiceAmount: inv.invoiceAmount || 0,
-    }))
-  )
+    setEditableInvoices(
+      list.map((inv) => ({
+        id: inv.id,
+        invoiceNo: inv.invoiceNo || '',
+        invoiceAmount: inv.invoiceAmount || 0,
+      }))
+    )
 
-  setInvoiceModalCheque(cheque)
-  setInvoiceModal(true)
-}
-
+    setInvoiceModalCheque(cheque)
+    setInvoiceModal(true)
+  }
 
   const invoiceList = useMemo(() => {
     const list = invoiceModalCheque?.invoices
@@ -321,11 +342,11 @@ const openInvoiceModal = (cheque) => {
 
   const allVisibleSelected =
     paginated.length > 0 && paginated.every((p) => selectedIds.includes(p.chequeId))
-    
-const handlePrintClose = (status) => {
+
+  const handlePrintClose = (status) => {
     setPrintData(false);
     // Handle different statuses
-    switch(status) {
+    switch (status) {
       case 'completed':
         console.log('Print dialog was closed (user either printed or cancelled)');
         break;
@@ -338,14 +359,14 @@ const handlePrintClose = (status) => {
       default:
         console.log('Unknown status:', status);
     }
-     setTimeout(() => navigate("/cheque"))
+    setTimeout(() => navigate("/cheque"))
   };
 
-   if (printData) {
-    return <ChequePrint data={chequeData} onClose={handlePrintClose}/>;
+  if (printData) {
+    return <ChequePrint data={chequeData} onClose={handlePrintClose} />;
   }
- 
-return (
+
+  return (
     <>
       <CCard className="mb-4 shadow-sm">
         <CCardHeader className="d-flex justify-content-between align-items-center">
@@ -387,83 +408,83 @@ return (
         <CCardBody>
           {/* FILTERS */}
           <div className="row mb-3 g-2">
-  <div className="col-md-2">
-    <CFormInput
-      placeholder="Cheque No"
-      value={chequeFilter}
-      onChange={(e) => setChequeFilter(e.target.value)}
-      style={{
-        borderColor: 'var(--cui-primary)',
-        boxShadow: 'none',
-      }}
-      onFocus={(e) =>
-        (e.target.style.boxShadow =
-          '0 0 0 0.2rem rgba(13,110,253,.25)')
-      }
-      onBlur={(e) => (e.target.style.boxShadow = 'none')}
-    />
-  </div>
+            <div className="col-md-2">
+              <CFormInput
+                placeholder="Cheque No"
+                value={chequeFilter}
+                onChange={(e) => setChequeFilter(e.target.value)}
+                style={{
+                  borderColor: 'var(--cui-primary)',
+                  boxShadow: 'none',
+                }}
+                onFocus={(e) =>
+                  (e.target.style.boxShadow =
+                    '0 0 0 0.2rem rgba(13,110,253,.25)')
+                }
+                onBlur={(e) => (e.target.style.boxShadow = 'none')}
+              />
+            </div>
 
-  <div className="col-md-2">
-    <CFormInput
-      placeholder="Supplier"
-      value={supplierFilter}
-      onChange={(e) => setSupplierFilter(e.target.value)}
-      style={{ borderColor: 'var(--cui-primary)' }}
-      onFocus={(e) =>
-        (e.target.style.boxShadow =
-          '0 0 0 0.2rem rgba(13,110,253,.25)')
-      }
-      onBlur={(e) => (e.target.style.boxShadow = 'none')}
-    />
-  </div>
+            <div className="col-md-2">
+              <CFormInput
+                placeholder="Supplier"
+                value={supplierFilter}
+                onChange={(e) => setSupplierFilter(e.target.value)}
+                style={{ borderColor: 'var(--cui-primary)' }}
+                onFocus={(e) =>
+                  (e.target.style.boxShadow =
+                    '0 0 0 0.2rem rgba(13,110,253,.25)')
+                }
+                onBlur={(e) => (e.target.style.boxShadow = 'none')}
+              />
+            </div>
 
-  <div className="col-md-2">
-    <CFormInput
-      placeholder="Invoice No"
-      value={invoiceFilter}
-      onChange={(e) => setInvoiceFilter(e.target.value)}
-      style={{ borderColor: 'var(--cui-primary)' }}
-      onFocus={(e) =>
-        (e.target.style.boxShadow =
-          '0 0 0 0.2rem rgba(13,110,253,.25)')
-      }
-      onBlur={(e) => (e.target.style.boxShadow = 'none')}
-    />
-  </div>
+            <div className="col-md-2">
+              <CFormInput
+                placeholder="Invoice No"
+                value={invoiceFilter}
+                onChange={(e) => setInvoiceFilter(e.target.value)}
+                style={{ borderColor: 'var(--cui-primary)' }}
+                onFocus={(e) =>
+                  (e.target.style.boxShadow =
+                    '0 0 0 0.2rem rgba(13,110,253,.25)')
+                }
+                onBlur={(e) => (e.target.style.boxShadow = 'none')}
+              />
+            </div>
 
-  <div className="col-md-2">
-    <CFormInput
-      type="date"
-      value={dueDateFilter}
-      onChange={(e) => setDueDateFilter(e.target.value)}
-      style={{ borderColor: 'var(--cui-primary)' }}
-      onFocus={(e) =>
-        (e.target.style.boxShadow =
-          '0 0 0 0.2rem rgba(13,110,253,.25)')
-      }
-      onBlur={(e) => (e.target.style.boxShadow = 'none')}
-    />
-  </div>
+            <div className="col-md-2">
+              <CFormInput
+                type="date"
+                value={dueDateFilter}
+                onChange={(e) => setDueDateFilter(e.target.value)}
+                style={{ borderColor: 'var(--cui-primary)' }}
+                onFocus={(e) =>
+                  (e.target.style.boxShadow =
+                    '0 0 0 0.2rem rgba(13,110,253,.25)')
+                }
+                onBlur={(e) => (e.target.style.boxShadow = 'none')}
+              />
+            </div>
 
-  <div className="col-md-2">
-    <CFormSelect
-      value={statusFilter}
-      onChange={(e) => setStatusFilter(e.target.value)}
-      style={{ borderColor: 'var(--cui-primary)' }}
-      onFocus={(e) =>
-        (e.target.style.boxShadow =
-          '0 0 0 0.2rem rgba(13,110,253,.25)')
-      }
-      onBlur={(e) => (e.target.style.boxShadow = 'none')}
-    >
-      <option value="">All Status</option>
-      {STATUS.map((s) => (
-        <option key={s}>{s}</option>
-      ))}
-    </CFormSelect>
-  </div>
-</div>
+            <div className="col-md-2">
+              <CFormSelect
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                style={{ borderColor: 'var(--cui-primary)' }}
+                onFocus={(e) =>
+                  (e.target.style.boxShadow =
+                    '0 0 0 0.2rem rgba(13,110,253,.25)')
+                }
+                onBlur={(e) => (e.target.style.boxShadow = 'none')}
+              >
+                <option value="">All Status</option>
+                {STATUS.map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
+              </CFormSelect>
+            </div>
+          </div>
 
           {/* TABLE */}
           {loading ? (
@@ -535,12 +556,12 @@ return (
                         {p.invoiceDate ? new Date(p.invoiceDate).toLocaleDateString() : ''}
                       </CTableDataCell>
 
-                     <CTableDataCell>
-  {Number(p.chequeAmount).toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}
-</CTableDataCell>
+                      <CTableDataCell>
+                        {Number(p.chequeAmount).toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </CTableDataCell>
                       <CTableDataCell>
                         {p.chequeDate ? new Date(p.chequeDate).toLocaleDateString() : ''}
                       </CTableDataCell>
@@ -572,7 +593,7 @@ return (
                             size="sm"
                             color="info"
                             variant="outline"
-                            onClick={() => printCheque(p.payeeName,p.chequeAmount,p.dueDate)}
+                            onClick={() => printCheque(p.payeeName, p.chequeAmount, p.dueDate)}
                             title="Print Cheque"
                             className="d-flex align-items-center justify-content-center"
                             style={{ minWidth: '36px' }}
@@ -643,6 +664,9 @@ return (
         </CCardBody>
       </CCard>
 
+      {/* ✅ NEW: CASH CHEQUE CONFIRMATION MODAL */}
+      
+
       {/* BULK MODAL */}
       <CModal visible={bulkModal} onClose={() => setBulkModal(false)} size="lg">
         <CModalHeader>
@@ -708,139 +732,197 @@ return (
         </CModalFooter>
       </CModal>
 
-  <CModal
-  visible={invoiceModal}
-  onClose={() => setInvoiceModal(false)}
-  size="lg"
-  alignment="center"
->
-  <CModalHeader closeButton={false} className="py-3 border-bottom">
-    <div className="d-flex justify-content-between align-items-center w-100">
-      <div>
-        <CModalTitle className="fw-semibold fs-5 mb-1">
-          Invoice Details
-        </CModalTitle>
-        <div className="text-muted small">
-          Cheque #{invoiceModalCheque?.chequeNo || 'N/A'}
-        </div>
-      </div>
+      <CModal
+        visible={invoiceModal}
+        onClose={() => setInvoiceModal(false)}
+        size="lg"
+        alignment="center"
+      >
+        <CModalHeader closeButton={false} className="py-3 border-bottom">
+          <div className="d-flex justify-content-between align-items-center w-100">
+            <div>
+              <CModalTitle className="fw-semibold fs-5 mb-1">
+                Invoice Details
+              </CModalTitle>
+              <div className="text-muted small">
+                Cheque #{invoiceModalCheque?.chequeNo || 'N/A'}
+              </div>
+            </div>
 
-      <div className="text-end">
-        <div
-          className="text-muted text-uppercase fw-medium mb-1"
-          style={{ fontSize: '0.7rem', letterSpacing: '0.5px' }}
-        >
-          Total Amount
-        </div>
-        <span
-          className="fw-bold text-primary"
-          style={{ fontSize: '1.5rem', letterSpacing: '-0.5px' }}
-        >
-          {invoiceModalTotal.toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'LKR',
-          })}
-        </span>
-      </div>
-    </div>
-  </CModalHeader>
-
-  <CModalBody
-    style={{
-      maxHeight: '65vh',
-      overflowY: 'auto',
-      padding: '1.5rem',
-    }}
-  >
-    <div className="shadow-sm rounded" style={{ maxHeight: 280, overflowY: 'auto' }}>
-      <CTable hover responsive bordered className="align-middle mb-0">
-        <CTableHead className="bg-light">
-          <CTableRow>
-            <CTableHeaderCell style={{ width: 50 }} className="text-center fw-semibold">
-              #
-            </CTableHeaderCell>
-            <CTableHeaderCell className="fw-semibold">
-              Invoice Number
-            </CTableHeaderCell>
-            <CTableHeaderCell className="fw-semibold">
-              Amount (LKR)
-            </CTableHeaderCell>
-          </CTableRow>
-        </CTableHead>
-
-        <CTableBody>
-          {editableInvoices.length === 0 ? (
-            <CTableRow>
-              <CTableDataCell colSpan={3} className="text-center text-muted py-4">
-                <div className="fw-medium mb-1">No invoices added yet</div>
-                <small>Click “Add Invoice” to get started</small>
-              </CTableDataCell>
-            </CTableRow>
-          ) : (
-            editableInvoices.map((inv, idx) => (
-              <CTableRow key={inv.id}>
-                <CTableDataCell className="text-center text-muted fw-medium">
-                  {idx + 1}
-                </CTableDataCell>
-
-                {/* Invoice Number */}
-                <CTableDataCell>
-                  <CFormInput
-                    size="sm"
-                    value={inv.invoiceNo}
-                    className="text-start fw-medium border-secondary"
-                    style={{ padding: '0.45rem 0.6rem' }}
-                  />
-                </CTableDataCell>
-
-                {/* Amount (LEFT aligned as requested) */}
-                <CTableDataCell>
-                  <CFormInput
-                    type="number"
-                    size="sm"
-                    value={Number(inv.invoiceAmount).toFixed(2)}
-                    className="text-start fw-medium border-secondary"
-                    style={{ padding: '0.45rem 0.6rem' }}
-                  />
-                </CTableDataCell>
-              </CTableRow>
-            ))
-          )}
-        </CTableBody>
-      </CTable>
-    </div>
-  </CModalBody>
-
-  <CModalFooter className="py-3 border-top">
-    <CButton
-      color="secondary"
-      size="sm"
-      variant="outline"
-      onClick={() => setInvoiceModal(false)}
-      className="px-4"
-    >
-      Cancel
-    </CButton>
-  </CModalFooter>
-</CModal>
-
-
-      {/* DELETE MODAL */}
-      <CModal visible={deleteModal} onClose={() => setDeleteModal(false)}>
-        <CModalHeader>
-          <CModalTitle>Delete Cheque</CModalTitle>
+            <div className="text-end">
+              <div
+                className="text-muted text-uppercase fw-medium mb-1"
+                style={{ fontSize: '0.7rem', letterSpacing: '0.5px' }}
+              >
+                Total Amount
+              </div>
+              <span
+                className="fw-bold text-primary"
+                style={{ fontSize: '1.5rem', letterSpacing: '-0.5px' }}
+              >
+                {invoiceModalTotal.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'LKR',
+                })}
+              </span>
+            </div>
+          </div>
         </CModalHeader>
-        <CModalBody>
-          Delete cheque <strong>{selectedPayment?.chequeNo}</strong>?
+
+        <CModalBody
+          style={{
+            maxHeight: '65vh',
+            overflowY: 'auto',
+            padding: '1.5rem',
+          }}
+        >
+          <div className="shadow-sm rounded" style={{ maxHeight: 280, overflowY: 'auto' }}>
+            <CTable hover responsive bordered className="align-middle mb-0">
+              <CTableHead className="bg-light">
+                <CTableRow>
+                  <CTableHeaderCell style={{ width: 50 }} className="text-center fw-semibold">
+                    #
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="fw-semibold">
+                    Invoice Number
+                  </CTableHeaderCell>
+                  <CTableHeaderCell className="fw-semibold">
+                    Amount (LKR)
+                  </CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+
+              <CTableBody>
+                {editableInvoices.length === 0 ? (
+                  <CTableRow>
+                    <CTableDataCell colSpan={3} className="text-center text-muted py-4">
+                      <div className="fw-medium mb-1">No invoices added yet</div>
+                      <small>Click "Add Invoice" to get started</small>
+                    </CTableDataCell>
+                  </CTableRow>
+                ) : (
+                  editableInvoices.map((inv, idx) => (
+                    <CTableRow key={inv.id}>
+                      <CTableDataCell className="text-center text-muted fw-medium">
+                        {idx + 1}
+                      </CTableDataCell>
+
+                      {/* Invoice Number */}
+                      <CTableDataCell>
+                        <CFormInput
+                          size="sm"
+                          value={inv.invoiceNo}
+                          className="text-start fw-medium border-secondary"
+                          style={{ padding: '0.45rem 0.6rem' }}
+                        />
+                      </CTableDataCell>
+
+                      {/* Amount (LEFT aligned as requested) */}
+                      <CTableDataCell>
+                        <CFormInput
+                          type="number"
+                          size="sm"
+                          value={Number(inv.invoiceAmount).toFixed(2)}
+                          className="text-start fw-medium border-secondary"
+                          style={{ padding: '0.45rem 0.6rem' }}
+                        />
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))
+                )}
+              </CTableBody>
+            </CTable>
+          </div>
         </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => setDeleteModal(false)}>
+
+        <CModalFooter className="py-3 border-top">
+          <CButton
+            color="secondary"
+            size="sm"
+            variant="outline"
+            onClick={() => setInvoiceModal(false)}
+            className="px-4"
+          >
             Cancel
           </CButton>
-          <CButton color="danger" onClick={confirmDelete}>
-            Delete
-          </CButton>
         </CModalFooter>
+      </CModal>
+
+      {/* DELETE MODAL */}
+         <CModal visible={deleteModal} onClose={() => setDeleteModal(false)} alignment="center" backdrop="static">
+        <CModalBody className="text-center p-5">
+          <div 
+            className="d-inline-flex align-items-center justify-content-center rounded-circle mb-4"
+            style={{
+              width: '80px',
+              height: '80px',
+              backgroundColor: '#ef4444',
+              boxShadow: '0 10px 25px rgba(239, 68, 68, 0.25)'
+            }}
+          >
+            <CIcon icon={cilTrash} size="xl" className="text-white" />
+          </div>
+          
+          <h4 className="fw-bold mb-3" style={{ color: '#2d3748' }}>
+            Delete Cheque
+          </h4>
+          
+          <p className="text-muted mb-4" style={{ fontSize: '1rem' }}>
+            Are you sure you want to delete cheque <strong className="text-dark">{selectedPayment?.chequeNo}</strong>?
+          </p>
+
+          <div className="d-flex gap-3 justify-content-center">
+            <CButton
+              color="light"
+              onClick={() => setDeleteModal(false)}
+              className="px-4 py-2 fw-semibold"
+              style={{
+                minWidth: '120px',
+                border: '2px solid #e2e8f0',
+                color: '#4a5568',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.borderColor = '#cbd5e0'
+                e.target.style.transform = 'translateY(-2px)'
+                e.target.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.borderColor = '#e2e8f0'
+                e.target.style.transform = 'translateY(0)'
+                e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)'
+              }}
+            >
+              Cancel
+            </CButton>
+            
+            <CButton
+              onClick={confirmDelete}
+              className="px-4 py-2 fw-semibold text-white"
+              style={{
+                minWidth: '120px',
+                backgroundColor: '#ef4444',
+                border: 'none',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#dc2626'
+                e.target.style.transform = 'translateY(-2px)'
+                e.target.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.4)'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#ef4444'
+                e.target.style.transform = 'translateY(0)'
+                e.target.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)'
+              }}
+            >
+              <CIcon icon={cilTrash} className="me-2" />
+              Delete
+            </CButton>
+          </div>
+        </CModalBody>
       </CModal>
 
       <ToastContainer position="top-right" autoClose={2000} />

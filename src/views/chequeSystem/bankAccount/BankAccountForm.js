@@ -155,6 +155,14 @@ const fetchBanks = async () => {
       setSubmitting(false)
     }
   }
+  useEffect(() => {
+  const username = localStorage.getItem("username") || "";
+
+  setFormData(prev => ({
+    ...prev,
+    accountName:username || ""
+  }))
+}, []);
 
   if (loading) {
     return (

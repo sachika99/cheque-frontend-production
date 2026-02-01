@@ -18,7 +18,7 @@ import {
   CModalFooter,
   CFormCheck,
 } from '@coreui/react'
-import { cilArrowLeft, cilSave, cilPlus, cilTrash } from '@coreui/icons'
+import { cilArrowLeft, cilSave, cilPlus, cilTrash, cilPaint, cilMoney, cilXCircle, cilPrint } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import { ToastContainer, toast } from 'react-toastify'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -78,7 +78,8 @@ const [isSubmitting, setIsSubmitting] = useState(false);
    const [chequeData, setChequeData] = useState({
     date: '',
     payee: '',
-    amount: ''
+    amount: '',
+    cashCheque:true,
     
   })
 
@@ -254,29 +255,41 @@ if (!isEditMode) {
   }
 
    const handleChange = (e) => {
-    const { name, value } = e.target
+  const { name, value } = e.target;
 
-    if (name === "invoiceDate" && paymentTime > 0) {
-      setPaymentTime(paymentTimee)
-      const due = new Date(value)
-      due.setDate(due.getDate() + paymentTime)
-      const formatted = due.toISOString().substring(0, 10)
+  if (name === "invoiceDate") {
+    const days = paymentTime || 0;
 
-      setFormData(prev => ({
-        ...prev,
-        invoiceDate: value,
-        dueDate: formatted
-      }))
-      return
-    }
-    setFormData(prev => ({ ...prev, [name]: value }))
+    const invoiceDate = new Date(value);
+    const dueDate = new Date(invoiceDate);
+    dueDate.setDate(invoiceDate.getDate() + days);
+
+    setFormData(prev => ({
+      ...prev,
+      invoiceDate: value,
+      dueDate: dueDate.toISOString().substring(0, 10),
+    }));
+
+    return;
   }
 
-   const handleChangeDueDate = (e) => {
-  const { name, value } = e.target;
-  const intValue = parseInt(value, 10);
+  // Default handler for other fields
+  setFormData(prev => ({
+    ...prev,
+    [name]: value,
+  }));
+};
 
-  if (name === "dueDateCount" && !isNaN(intValue) && intValue > 0) {
+
+ const handleChangeDueDate = (e) => {
+  debugger
+  const { name, value } = e.target;
+
+  if (name === "dueDateCount") {
+    // Remove leading zeros (but allow single "0")
+    const cleanedValue = value.replace(/^0+(?=\d)/, '');
+
+    const intValue = parseInt(cleanedValue, 10) || 0;
     setPaymentTime(intValue);
 
     const due = new Date(formData.invoiceDate);
@@ -286,7 +299,8 @@ if (!isEditMode) {
 
     setFormData(prev => ({
       ...prev,
-      dueDate: formatted
+      dueDate: formatted,
+      dueDateCount: cleanedValue, // keep input clean
     }));
   }
 };
@@ -407,6 +421,7 @@ const handlePrintClose = (status) => {
 }, [accounts]);
    if (printData&& tickBox) {
      console.log("cretae"+chequeData)
+     debugger
     return <ChequePrint data={chequeData} onClose={handlePrintClose}/>;
   }
  
@@ -506,6 +521,7 @@ const handlePrintClose = (status) => {
                     required
                     name="dueDateCount"
                     value={paymentTime}
+                    min={0}
                     onChange={handleChangeDueDate}
                     disabled={!formData.invoiceDate}
                     className="border border-danger"
@@ -701,78 +717,154 @@ const handlePrintClose = (status) => {
                 ))}
               </div>
 
-              <div className="d-flex justify-content-end gap-2">
-               <div 
-    className="d-flex align-items-center" 
+            <div className="d-flex justify-content-end gap-3 align-items-center">
+  <div 
+    className="d-flex align-items-center gap-2 px-3 py-2 rounded-3" 
     style={{ 
-      height: '36px',
-      // border: '2px solid #28A745',
-      borderRadius: '6px',
-      padding: '0 10px',
-      // backgroundColor: '#dfece2'
+      // backgroundColor: '#f8f9fa',
+      border: '1px solid #0080ff',
+      transition: 'all 0.2s ease'
     }}
   >
-   
+    <CIcon 
+      icon={cilPrint} 
+      style={{ 
+        color: '#0080ff',
+        fontSize: '18px'
+      }} 
+    />
     <label 
       htmlFor="printCheque" 
+      className="mb-0"
       style={{ 
-        
         cursor: 'pointer',
-        color: '#28A745',
+        // color: '#0080ff',
         fontWeight: '600',
-        fontSize: '15px',
+        fontSize: '14px',
         userSelect: 'none'
       }}
     >
-      Print Cheque While Submit
+      Print Cheque
     </label>
-     <input
+    <input
       type="checkbox"
       id="printCheque" 
       name="printCheque"
       checked={tickBox}
       onChange={(e) => setTickBox(e.target.checked)}
+      className="form-check-input"
       style={{
-        marginLeft: '10px', 
         width: '20px',
         height: '20px',
         cursor: 'pointer',
-        accentColor: '#28A745',
-        borderRadius: '4px'
+        marginTop: '0',
+          border: '1px solid #0080ff',
       }}
     />
   </div>
-<CButton
-                  variant="outline"
-                  color="secondary"
-                  disabled={submitting}
-                  onClick={() => navigate("/cheque")}
-                >
-                  Cancel
-                </CButton>
-                <CButton color="primary" type="submit" disabled={submitting}>
-                  {submitting ? (
-                    <>
-                      <CSpinner size="sm" className="me-2" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <CIcon icon={cilSave} className="me-2" />
-                      {isEditMode ? "Update Payment" : "Create Payment"}
-                    </>
-                  )}
-                </CButton>
-              </div>
-            </CForm>
+
+  <div 
+    className="d-flex align-items-center gap-2 px-3 py-2 rounded-3" 
+    style={{ 
+      // backgroundColor: '#f8f9fa',
+      border: '1px solid #0d9700',
+      transition: 'all 0.2s ease'
+    }}
+   
+  >
+    <CIcon 
+      icon={cilMoney} 
+      style={{ 
+        color: '#0d9700',
+        fontSize: '18px'
+      }} 
+    />
+    <label 
+      htmlFor="cashCheque" 
+      className="mb-0"
+      style={{ 
+        cursor: 'pointer',
+        // color: '#15ff00',
+        fontWeight: '600',
+        fontSize: '14px',
+        userSelect: 'none'
+      }}
+    >
+      Cash Cheque
+    </label>
+    <input
+      type="checkbox"
+      id="cashCheque" 
+      name="cashCheque"
+      checked={!chequeData.cashCheque}
+      onChange={(e) => setChequeData(prev => ({
+        ...prev,
+        cashCheque: !e.target.checked
+      }))}
+      className="form-check-input"
+      style={{
+        width: '20px',
+        height: '20px',
+        cursor: 'pointer',
+        marginTop: '0',
+         border: '1px solid #0d9700',
+      }}
+    />
+  </div>
+
+  <div 
+    style={{ 
+      width: '1px', 
+      height: '36px', 
+      backgroundColor: '#dee2e6' 
+    }} 
+  />
+
+  <CButton
+    variant="outline"
+    color="secondary"
+    disabled={submitting}
+    onClick={() => navigate("/cheque")}
+    className="px-4 fw-semibold d-flex align-items-center"
+    style={{
+      height: '40px',
+      transition: 'all 0.2s ease'
+    }}
+  >
+    {/* <CIcon icon={cilXCircle} className="me-2" /> */}
+    Cancel
+  </CButton>
+
+  <CButton 
+    color="primary" 
+    type="submit" 
+    disabled={submitting}
+    className="px-4 fw-semibold d-flex align-items-center"
+    style={{
+      height: '40px',
+      minWidth: '160px',
+      boxShadow: submitting ? 'none' : '0 2px 8px rgba(13, 110, 253, 0.25)',
+      transition: 'all 0.2s ease'
+    }}
+  >
+    {submitting ? (
+      <>
+        <CSpinner size="sm" className="me-2" />
+        Saving...
+      </>
+    ) : (
+      <>
+        <CIcon icon={cilSave} className="me-2" />
+        {isEditMode ? "Update Payment" : "Create Payment"}
+      </>
+    )}
+  </CButton>
+</div>
+            </CForm>       
           </CCardBody>
         </CCard>
       </div>
 
-      {/* Print content - always in DOM but hidden on screen */}
-      {/* <div className="print-only" ref={printRef}>
-        {printData && <ChequePrint data={{date: '2026-01-02', payee: 'wsdfef', amount: '123232'}} />}
-      </div> */}
 
       <ToastContainer position="top-right" autoClose={2300} theme="colored" />
 

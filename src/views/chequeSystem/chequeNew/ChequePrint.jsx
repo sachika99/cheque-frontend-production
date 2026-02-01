@@ -170,6 +170,7 @@ function ChequePrint({ data, onClose }) {
           >
             
             {/* AC PAYEE'S ONLY */}
+                {data.cashCheque && (
             <div
               style={{
                 position: 'absolute',
@@ -191,6 +192,7 @@ function ChequePrint({ data, onClose }) {
               </div>
               <div style={{ width: '120px', borderTop: '0.6mm solid #000', marginTop: '3px' }} />
             </div>
+            )}
 
             {/* Date Field */}
             <div
@@ -266,6 +268,7 @@ function ChequePrint({ data, onClose }) {
             </div>
 
             {/* Rupees Symbol Box */}
+                {data.cashCheque && (
             <div
               style={{
                 position: 'absolute',
@@ -280,6 +283,7 @@ function ChequePrint({ data, onClose }) {
             >
               XX
             </div>
+            )}
 
             {/* Amount in Figures */}
             <div
