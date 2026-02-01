@@ -149,7 +149,7 @@ function ChequePrint({ data, onClose }) {
 
   const dateDigits = getDateDigits();
   const amountInWords = data.amount ? `${numberToWords(data.amount.split('.')[0])} Only` : '';
-  const amountFormatted = formatAmount(data.amount.split('.')[0]);
+const amountFormatted = Number(data?.amount ?? 0).toFixed(2);
 
  return (
     <div className="cheque-print-wrapper cheque-hidden-preview">
