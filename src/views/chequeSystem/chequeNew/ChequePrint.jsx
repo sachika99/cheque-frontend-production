@@ -48,7 +48,7 @@ function ChequePrint({ data, onClose }) {
   payeeOnlyLeft: 0,
     payeeOnlyBottom: 60,
     dateLeft: 118,
-    dateBottom: 67.5,
+    dateBottom: 68,
     dateBoxWidth: 6.5,
     dateMiddleGap: 12,
     payeeLeft: 18,
@@ -57,7 +57,7 @@ function ChequePrint({ data, onClose }) {
     amountWordsBottom: 32,
     amountWordsWidth: 115,
     amountFiguresLeft: 124,
-    amountFiguresBottom: 38,
+    amountFiguresBottom: 39,
     rupeeSymbolLeft: 136,
     rupeeSymbolBottom: 50
   };
@@ -151,7 +151,7 @@ function ChequePrint({ data, onClose }) {
   const amountInWords = data.amount ? `${numberToWords(data.amount.split('.')[0])} Only` : '';
 const amountFormatted = Number(data?.amount ?? 0).toFixed(2);
 
- return (
+return (
     <div className="cheque-print-wrapper cheque-hidden-preview">
       {/* Printable cheque */}
       <div className="cheque-printable-area">
@@ -200,10 +200,10 @@ const amountFormatted = Number(data?.amount ?? 0).toFixed(2);
                 position: 'absolute',
                 left: `${fieldPositions.dateLeft}mm`,
                 bottom: `${fieldPositions.dateBottom}mm`,
-                fontFamily: 'monospace'
+                fontFamily: 'OCR-BczykNorm, monospace'
               }}
             >
-              <div style={{ display: 'flex', fontSize: '20px', fontFamily: 'monospace', color: 'black', gap: '0' }}>
+              <div style={{ display: 'flex', fontSize: '20px', fontFamily: 'OCR-BczykNorm, monospace', color: 'black', gap: '0' }}>
                 {/* Day digits */}
                 <span style={{ display: 'inline-block', width: `${fieldPositions.dateBoxWidth}mm`, textAlign: 'center' }}>
                   {dateDigits[0]}
@@ -237,14 +237,16 @@ const amountFormatted = Number(data?.amount ?? 0).toFixed(2);
                 position: 'absolute',
                 left: `${fieldPositions.payeeLeft}mm`,
                 bottom: `${fieldPositions.payeeBottom}mm`,
-                fontFamily: 'monospace',
+                fontFamily: 'OCR-BczykNorm, monospace',
                 fontSize: '18px',
                 fontWeight: 'normal',
                 color: 'black',
                 maxWidth: '140mm'
               }}
             >
-              **{data.payee}**
+              **
+              {data.payee}
+              **
             </div>
 
             {/* Amount in Words */}
@@ -253,7 +255,7 @@ const amountFormatted = Number(data?.amount ?? 0).toFixed(2);
                 position: 'absolute',
                 left: `${fieldPositions.amountWordsLeft}mm`,
                 bottom: `${fieldPositions.amountWordsBottom}mm`,
-                fontFamily: 'monospace',
+                fontFamily: 'OCR-BczykNorm, monospace',
                 fontSize: '18px',
                 fontWeight: 'normal',
                 color: 'black',
@@ -262,9 +264,11 @@ const amountFormatted = Number(data?.amount ?? 0).toFixed(2);
                 minHeight: '20mm'
               }}
             >
+              **
               <span style={{ display: 'inline-block', maxWidth: '95mm', whiteSpace: 'normal', wordBreak: 'break-word' }}>
-                **{amountInWords}**
+                {amountInWords}
               </span>
+              **
             </div>
 
             {/* Rupees Symbol Box */}
@@ -274,7 +278,7 @@ const amountFormatted = Number(data?.amount ?? 0).toFixed(2);
                 position: 'absolute',
                 left: `${fieldPositions.rupeeSymbolLeft}mm`,
                 bottom: `${fieldPositions.rupeeSymbolBottom}mm`,
-                fontFamily: 'monospace',
+                fontFamily: 'OCR-BczykNorm, monospace',
                 textAlign: 'center',
                 color: 'black',
                 fontSize: '18px',
@@ -291,13 +295,15 @@ const amountFormatted = Number(data?.amount ?? 0).toFixed(2);
                 position: 'absolute',
                 left: `${fieldPositions.amountFiguresLeft}mm`,
                 bottom: `${fieldPositions.amountFiguresBottom}mm`,
-                fontFamily: 'monospace',
+                fontFamily: 'OCR-BczykNorm, monospace',
                 fontSize: '18px',
-                fontWeight: 'bold',
+                // fontWeight: 'bold',
                 color: 'black'
               }}
             >
-              **{amountFormatted}**
+              **
+              {amountFormatted}
+              **
             </div>
 
           </div>

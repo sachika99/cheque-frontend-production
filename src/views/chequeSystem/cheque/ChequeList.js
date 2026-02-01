@@ -464,10 +464,10 @@ const ChequeList = () => {
                   <CTableHeaderCell>Invoice</CTableHeaderCell>
 
                   <CTableHeaderCell>Amount (LKR)</CTableHeaderCell>
-                  <CTableHeaderCell>Cheque Date</CTableHeaderCell>
-                  <CTableHeaderCell>Due Date</CTableHeaderCell>
+                  {/* <CTableHeaderCell>Cheque Date</CTableHeaderCell> */}
+                  <CTableHeaderCell>Realised Date</CTableHeaderCell>
                   <CTableHeaderCell>Cheque Type </CTableHeaderCell>
-                  <CTableHeaderCell>Overdue?</CTableHeaderCell>
+                  {/* <CTableHeaderCell>Overdue?</CTableHeaderCell> */}
                   <CTableHeaderCell>Status</CTableHeaderCell>
                   <CTableHeaderCell className="text-center">Actions</CTableHeaderCell>
                 </CTableRow>
@@ -528,21 +528,21 @@ const ChequeList = () => {
                           maximumFractionDigits: 2,
                         })}
                       </CTableDataCell>
-                      <CTableDataCell>
+                      {/* <CTableDataCell>
                         {p.chequeDate ? new Date(p.chequeDate).toLocaleDateString() : ''}
-                      </CTableDataCell>
+                      </CTableDataCell> */}
 
                       <CTableDataCell>
                         {p.dueDate ? new Date(p.dueDate).toLocaleDateString() : ''}
                       </CTableDataCell>
                       <CTableDataCell>{p.receiptNo || ''}</CTableDataCell>
-                      <CTableDataCell>
+                      {/* <CTableDataCell>
                         {p.isOverdue ? (
                           <CBadge color="danger">Yes</CBadge>
                         ) : (
                           <CBadge color="success">No</CBadge>
                         )}
-                      </CTableDataCell>
+                      </CTableDataCell> */}
 
                       <CTableDataCell>
                         <CFormSelect
@@ -695,8 +695,8 @@ const ChequeList = () => {
                 boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
               }}
             >
-              <CIcon icon={cilXCircle} className="me-2" />
-              No
+                <CIcon icon={cilCheckCircle} className="me-2" />
+              Yes
             </CButton>
 
             <CButton
@@ -710,8 +710,9 @@ const ChequeList = () => {
                 boxShadow: '0 4px 12px rgba(108, 92, 231, 0.3)',
               }}
             >
-              <CIcon icon={cilCheckCircle} className="me-2" />
-              Yes
+           
+              <CIcon icon={cilXCircle} className="me-2" />
+              No
             </CButton>
           </div>
         </CModalBody>

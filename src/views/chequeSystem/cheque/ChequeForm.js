@@ -452,6 +452,33 @@ const ChequeForm = () => {
           <CCardBody className="pt-4">
             <CForm onSubmit={handleSubmit}>
               <CRow className="mb-4">
+                 <CCol md={4}>
+                  <CFormLabel className="fw-medium">
+                    Bank Account <span className="text-danger">*</span>
+                  </CFormLabel>
+
+                  <CFormSelect
+                    required
+                    value={selectedAccountId}
+                    onChange={(e) => {
+                      const newId = Number(e.target.value)
+
+                      if (newId !== previousAccountId) {
+                        setPendingAccountId(newId)
+                        setConfirmVisible(true)
+                      }
+                    }}
+                  >
+                    <option value="">Select Account</option>
+                    {accounts.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.accountNo} — {a.bankName}
+                        {a.status === 'Active' ? ' (Primary)' : ''}
+                      </option>
+                    ))}
+                  </CFormSelect>
+                </CCol>
+
                 <CCol md={4}>
                   <CFormLabel className="fw-medium">
                     Supplier <span className="text-danger">*</span>
@@ -483,35 +510,9 @@ const ChequeForm = () => {
                   </CFormSelect>
                 </CCol>
 
-                <CCol md={4}>
-                  <CFormLabel className="fw-medium">
-                    Bank Account <span className="text-danger">*</span>
-                  </CFormLabel>
-
-                  <CFormSelect
-                    required
-                    value={selectedAccountId}
-                    onChange={(e) => {
-                      const newId = Number(e.target.value)
-
-                      if (newId !== previousAccountId) {
-                        setPendingAccountId(newId)
-                        setConfirmVisible(true)
-                      }
-                    }}
-                  >
-                    <option value="">Select Account</option>
-                    {accounts.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.accountNo} — {a.bankName}
-                        {a.status === 'Active' ? ' (Primary)' : ''}
-                      </option>
-                    ))}
-                  </CFormSelect>
-                </CCol>
-
+               
                 <CCol md={2}>
-                  <CFormLabel>Due Days</CFormLabel>
+                  <CFormLabel>Credit Period</CFormLabel>
                   <CFormInput
                     type="number"
                     required
@@ -525,83 +526,6 @@ const ChequeForm = () => {
                   {!formData.invoiceDate && (
                     <small className="text-danger fw-semibold">Select invoice date first</small>
                   )}
-                </CCol>
-              </CRow>
-
-              <hr className="my-4" />
-
-              <CRow className="mb-4">
-                <CCol md={4}>
-                  <CFormLabel>Cheque No</CFormLabel>
-                  <CFormInput
-                    required
-                    name="chequeNo"
-                    value={formData.chequeNo}
-                    onChange={handleChange}
-                  />
-                </CCol>
-
-                <CCol md={4}>
-                  <CFormLabel>Invoice Date</CFormLabel>
-                  <CFormInput
-                    type="date"
-                    required
-                    name="invoiceDate"
-                    value={formData.invoiceDate}
-                    onChange={handleChange}
-                    disabled={!formData.supplierId}
-                  />
-                  {!formData.supplierId && (
-                    <small className="text-danger fw-semibold">
-                      Select a supplier first to enable Invoice date.
-                    </small>
-                  )}
-                </CCol>
-
-                <CCol md={4}>
-                  <CFormLabel>
-                    Due Date{' '}
-                    {paymentTime > 0 && (
-                      <small className="text-success fw-semibold">
-                        Due date will set in {paymentTime} days
-                      </small>
-                    )}
-                  </CFormLabel>
-                  <CFormInput
-                    type="date"
-                    required
-                    name="dueDate"
-                    value={formData.dueDate}
-                    onChange={handleChange}
-                  />
-                </CCol>
-              </CRow>
-
-              <CRow className="mb-4">
-                <CCol md={4}>
-                  <CFormLabel>Cheque Date</CFormLabel>
-                  <CFormInput
-                    type="date"
-                    required
-                    name="chequeDate"
-                    value={formData.chequeDate}
-                    onChange={handleChange}
-                  />
-                </CCol>
-
-                <CCol md={4}>
-                  <CFormLabel>Status</CFormLabel>
-                  <CFormSelect
-                    required
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="Issued">Issued</option>
-                    <option value="Cleared">Cleared</option>
-                    <option value="Bounced">Bounced</option>
-                  </CFormSelect>
                 </CCol>
               </CRow>
 
@@ -679,6 +603,85 @@ const ChequeForm = () => {
                   </CRow>
                 ))}
               </div>
+              <hr className="my-4" />
+
+              <CRow className="mb-4">
+                
+
+                <CCol md={4}>
+                  <CFormLabel>Invoice Date</CFormLabel>
+                  <CFormInput
+                    type="date"
+                    required
+                    name="invoiceDate"
+                    value={formData.invoiceDate}
+                    onChange={handleChange}
+                    disabled={!formData.supplierId}
+                  />
+                  {!formData.supplierId && (
+                    <small className="text-danger fw-semibold">
+                      Select a supplier first to enable Invoice date.
+                    </small>
+                  )}
+                </CCol>
+
+                <CCol md={4}>
+                  <CFormLabel>
+                    Realised Date{' '}
+                    {paymentTime > 0 && (
+                      <small className="text-success fw-semibold">
+                        Realised Date will set in {paymentTime} days
+                      </small>
+                    )}
+                  </CFormLabel>
+                  <CFormInput
+                    type="date"
+                    required
+                    name="dueDate"
+                    value={formData.dueDate}
+                    onChange={handleChange}
+                  />
+                </CCol>
+                <CCol md={4}>
+                  <CFormLabel>Cheque No</CFormLabel>
+                  <CFormInput
+                    required
+                    name="chequeNo"
+                    value={formData.chequeNo}
+                    onChange={handleChange}
+                  />
+                </CCol>
+              </CRow>
+
+              <CRow className="mb-4">
+                {/* <CCol md={4}>
+                  <CFormLabel>Cheque Date</CFormLabel>
+                  <CFormInput
+                    type="date"
+                    required
+                    name="chequeDate"
+                    value={formData.chequeDate}
+                    onChange={handleChange}
+                  />
+                </CCol> */}
+
+                <CCol md={4}>
+                  <CFormLabel>Status</CFormLabel>
+                  <CFormSelect
+                    required
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Issued">Issued</option>
+                    <option value="Cleared">Cleared</option>
+                    <option value="Bounced">Bounced</option>
+                  </CFormSelect>
+                </CCol>
+              </CRow>
+
+              <hr className="my-4" />
 
               <div className="d-flex justify-content-end gap-3 align-items-center">
                 <div
