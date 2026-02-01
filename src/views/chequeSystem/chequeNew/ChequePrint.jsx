@@ -45,21 +45,21 @@ function ChequePrint({ data, onClose }) {
   }, [onClose]);
 
   const fieldPositions = {
-    payeeOnlyLeft: 0,
-    payeeOnlyBottom: 59,
-    dateLeft: 120,
-    dateBottom: 67,
+  payeeOnlyLeft: 0,
+    payeeOnlyBottom: 60,
+    dateLeft: 118,
+    dateBottom: 67.5,
     dateBoxWidth: 6.5,
     dateMiddleGap: 12,
-    payeeLeft: 15,
-    payeeBottom: 53,
-    amountWordsLeft: 16,
-    amountWordsBottom: 38,
+    payeeLeft: 18,
+    payeeBottom: 55.5,
+    amountWordsLeft: 15,
+    amountWordsBottom: 32,
     amountWordsWidth: 115,
-    amountFiguresLeft: 131,
-    amountFiguresBottom: 34,
-    rupeeSymbolLeft: 145,
-    rupeeSymbolBottom: 46
+    amountFiguresLeft: 124,
+    amountFiguresBottom: 38,
+    rupeeSymbolLeft: 136,
+    rupeeSymbolBottom: 50
   };
 
   // Fixed cheque position (ORIGINAL VALUE - 295)
@@ -151,7 +151,7 @@ function ChequePrint({ data, onClose }) {
   const amountInWords = data.amount ? `${numberToWords(data.amount.split('.')[0])} Only` : '';
   const amountFormatted = formatAmount(data.amount.split('.')[0]);
 
-  return (
+ return (
     <div className="cheque-print-wrapper cheque-hidden-preview">
       {/* Printable cheque */}
       <div className="cheque-printable-area">
@@ -200,7 +200,7 @@ function ChequePrint({ data, onClose }) {
                 position: 'absolute',
                 left: `${fieldPositions.dateLeft}mm`,
                 bottom: `${fieldPositions.dateBottom}mm`,
-                fontFamily: "'Courier New', monospace"
+                fontFamily: 'monospace'
               }}
             >
               <div style={{ display: 'flex', fontSize: '20px', fontFamily: 'monospace', color: 'black', gap: '0' }}>
@@ -237,9 +237,9 @@ function ChequePrint({ data, onClose }) {
                 position: 'absolute',
                 left: `${fieldPositions.payeeLeft}mm`,
                 bottom: `${fieldPositions.payeeBottom}mm`,
-                fontFamily: "'Courier New', monospace",
-                fontSize: '15px',
-                fontWeight: 'bold',
+                fontFamily: 'monospace',
+                fontSize: '18px',
+                fontWeight: 'normal',
                 color: 'black',
                 maxWidth: '140mm'
               }}
@@ -253,9 +253,9 @@ function ChequePrint({ data, onClose }) {
                 position: 'absolute',
                 left: `${fieldPositions.amountWordsLeft}mm`,
                 bottom: `${fieldPositions.amountWordsBottom}mm`,
-                fontFamily: "'Courier New', monospace",
-                fontSize: '14px',
-                fontWeight: 'bold',
+                fontFamily: 'monospace',
+                fontSize: '18px',
+                fontWeight: 'normal',
                 color: 'black',
                 maxWidth: `${fieldPositions.amountWordsWidth}mm`,
                 lineHeight: '1.7',
@@ -274,14 +274,14 @@ function ChequePrint({ data, onClose }) {
                 position: 'absolute',
                 left: `${fieldPositions.rupeeSymbolLeft}mm`,
                 bottom: `${fieldPositions.rupeeSymbolBottom}mm`,
-                fontFamily: "'Courier New', monospace",
+                fontFamily: 'monospace',
                 textAlign: 'center',
                 color: 'black',
-                fontSize: '16px',
+                fontSize: '18px',
                 fontWeight: 'bold'
               }}
             >
-              XX
+              XXXX
             </div>
             )}
 
@@ -291,7 +291,7 @@ function ChequePrint({ data, onClose }) {
                 position: 'absolute',
                 left: `${fieldPositions.amountFiguresLeft}mm`,
                 bottom: `${fieldPositions.amountFiguresBottom}mm`,
-                fontFamily: "'Courier New', monospace",
+                fontFamily: 'monospace',
                 fontSize: '18px',
                 fontWeight: 'bold',
                 color: 'black'

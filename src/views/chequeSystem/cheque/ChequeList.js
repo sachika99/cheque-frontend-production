@@ -33,6 +33,7 @@ import {
   cilList,
   cilXCircle,
   cilCheckCircle,
+  cilX,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import { ToastContainer, toast } from 'react-toastify'
@@ -44,9 +45,8 @@ import ChequePrint from '../chequeNew/ChequePrint'
 
 const ChequeList = () => {
   const navigate = useNavigate()
-  const currentUser = 'admin' // 🔐 replace with logged-in user
+  const currentUser = 'admin'
 
-  /* ================= STATE ================= */
   const [payments, setPayments] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -60,7 +60,6 @@ const ChequeList = () => {
   const pageSize = 10
   const [totalPages, setTotalPages] = useState(0)
 
-  // ✅ GLOBAL SELECTION (PERSISTENT)
   const [selectedIds, setSelectedIds] = useState([])
 
   const [deleteModal, setDeleteModal] = useState(false)
@@ -69,20 +68,17 @@ const ChequeList = () => {
   const [bulkModal, setBulkModal] = useState(false)
   const [bulkLoading, setBulkLoading] = useState(false)
 
-  // ✅ NEW: Invoice modal
   const [invoiceModal, setInvoiceModal] = useState(false)
   const [invoiceModalCheque, setInvoiceModalCheque] = useState(null)
-  // Invoice modal editable state
   const [editableInvoices, setEditableInvoices] = useState([])
   const [printData, setPrintData] = useState(false)
   const [chequeData, setChequeData] = useState({
     date: '',
     payee: '',
     amount: '',
-    cashCheque: false
+    cashCheque: false,
   })
 
-  // ✅ NEW: Cash Cheque Confirmation Modal
   const [cashChequeModal, setCashChequeModal] = useState(false)
   const [pendingPrintData, setPendingPrintData] = useState(null)
 
@@ -99,14 +95,10 @@ const ChequeList = () => {
       let list = Array.isArray(res) ? res : res?.data || []
 
       if (supplierFilter)
-        list = list.filter((p) =>
-          p.payeeName?.toLowerCase().includes(supplierFilter.toLowerCase())
-        )
+        list = list.filter((p) => p.payeeName?.toLowerCase().includes(supplierFilter.toLowerCase()))
 
       if (chequeFilter)
-        list = list.filter((p) =>
-          p.chequeNo?.toLowerCase().includes(chequeFilter.toLowerCase())
-        )
+        list = list.filter((p) => p.chequeNo?.toLowerCase().includes(chequeFilter.toLowerCase()))
 
       if (invoiceFilter) {
         const s = invoiceFilter.toLowerCase()
@@ -121,18 +113,14 @@ const ChequeList = () => {
 
       if (dueDateFilter)
         list = list.filter(
-          (p) =>
-            p.dueDate &&
-            new Date(p.dueDate).toISOString().split('T')[0] === dueDateFilter
+          (p) => p.dueDate && new Date(p.dueDate).toISOString().split('T')[0] === dueDateFilter,
         )
 
-      if (statusFilter)
-        list = list.filter((p) => p.status === statusFilter)
+      if (statusFilter) list = list.filter((p) => p.status === statusFilter)
 
       setPayments(list)
       setTotalPages(Math.ceil(list.length / pageSize))
       setCurrentPage(1)
-
     } catch {
       toast.error('Failed to load cheques')
     } finally {
@@ -142,9 +130,7 @@ const ChequeList = () => {
 
   const updateInvoiceField = (index, field, value) => {
     setEditableInvoices((prev) =>
-      prev.map((inv, i) =>
-        i === index ? { ...inv, [field]: value } : inv
-      )
+      prev.map((inv, i) => (i === index ? { ...inv, [field]: value } : inv)),
     )
   }
 
@@ -170,9 +156,7 @@ const ChequeList = () => {
     try {
       await chequeServices.updateChequeStatus(chequeId, newStatus, currentUser)
       setPayments((prev) =>
-        prev.map((p) =>
-          p.chequeId === chequeId ? { ...p, status: newStatus } : p
-        )
+        prev.map((p) => (p.chequeId === chequeId ? { ...p, status: newStatus } : p)),
       )
       toast.success('Status updated')
     } catch {
@@ -181,9 +165,7 @@ const ChequeList = () => {
   }
 
   const toggleSelect = (id) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    )
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
   }
 
   const toggleSelectAllVisible = (checked, visibleRows) => {
@@ -199,7 +181,7 @@ const ChequeList = () => {
 
   const selectedCheques = useMemo(
     () => payments.filter((p) => selectedIds.includes(p.chequeId)),
-    [payments, selectedIds]
+    [payments, selectedIds],
   )
 
   const totalSelectedAmount = useMemo(
@@ -210,11 +192,11 @@ const ChequeList = () => {
           Number(
             typeof p.chequeAmount === 'number'
               ? p.chequeAmount
-              : String(p.chequeAmount).replace(/,/g, '')
+              : String(p.chequeAmount).replace(/,/g, ''),
           ),
-        0
+        0,
       ),
-    [selectedCheques]
+    [selectedCheques],
   )
 
   const openBulkModal = () => {
@@ -225,24 +207,23 @@ const ChequeList = () => {
     setBulkModal(true)
   }
 
-  // ✅ UPDATED: Open modal first, then print
   const printCheque = (payeeName, chequeAmount, dueDate) => {
     setPendingPrintData({
       payeeName,
       chequeAmount,
-      dueDate
+      dueDate,
     })
+
     setCashChequeModal(true)
   }
 
-  // ✅ NEW: Handle cash cheque confirmation
   const handleCashChequeConfirm = (isCashCheque) => {
     if (pendingPrintData) {
       setChequeData({
         payee: pendingPrintData.payeeName,
         amount: String(pendingPrintData.chequeAmount),
-        date: pendingPrintData.dueDate.split("T")[0],
-        cashCheque: isCashCheque
+        date: pendingPrintData.dueDate.split('T')[0],
+        cashCheque: isCashCheque,
       })
       setPrintData(true)
     }
@@ -256,9 +237,7 @@ const ChequeList = () => {
       await chequeServices.updateChequeStatusBulk(selectedIds, 'Issued', currentUser)
 
       setPayments((prev) =>
-        prev.map((p) =>
-          selectedIds.includes(p.chequeId) ? { ...p, status: 'Issued' } : p
-        )
+        prev.map((p) => (selectedIds.includes(p.chequeId) ? { ...p, status: 'Issued' } : p)),
       )
 
       toast.success('Selected cheques issued')
@@ -284,7 +263,9 @@ const ChequeList = () => {
       'Due Date': p.dueDate ? new Date(p.dueDate).toLocaleDateString() : '',
       Status: p.status,
       Overdue: p.isOverdue ? 'Yes' : 'No',
-      'Multi Invoices': Array.isArray(p.invoices) ? p.invoices.map(x => x.invoiceNo).join(', ') : '',
+      'Multi Invoices': Array.isArray(p.invoices)
+        ? p.invoices.map((x) => x.invoiceNo).join(', ')
+        : '',
     }))
 
     const ws = XLSX.utils.json_to_sheet(data)
@@ -293,7 +274,6 @@ const ChequeList = () => {
     XLSX.writeFile(wb, `${fileName}.xlsx`)
   }
 
-  /* ================= DELETE ================= */
   const confirmDelete = async () => {
     try {
       await chequeServices.deleteCheque(selectedPayment.chequeId)
@@ -305,7 +285,6 @@ const ChequeList = () => {
     }
   }
 
-  /* ================= INVOICE MODAL ================= */
   const openInvoiceModal = (cheque) => {
     const list = Array.isArray(cheque?.invoices) ? cheque.invoices : []
 
@@ -314,7 +293,7 @@ const ChequeList = () => {
         id: inv.id,
         invoiceNo: inv.invoiceNo || '',
         invoiceAmount: inv.invoiceAmount || 0,
-      }))
+      })),
     )
 
     setInvoiceModalCheque(cheque)
@@ -329,41 +308,36 @@ const ChequeList = () => {
   const invoiceTotal = useMemo(() => {
     return invoiceList.reduce((sum, inv) => {
       const raw = inv?.invoiceAmount ?? 0
-      const n =
-        typeof raw === 'number'
-          ? raw
-          : parseFloat(String(raw).replace(/,/g, '').trim())
+      const n = typeof raw === 'number' ? raw : parseFloat(String(raw).replace(/,/g, '').trim())
       return sum + (Number.isFinite(n) ? n : 0)
     }, 0)
   }, [invoiceList])
 
-  /* ================= PAGINATION ================= */
   const paginated = payments.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   const allVisibleSelected =
     paginated.length > 0 && paginated.every((p) => selectedIds.includes(p.chequeId))
 
   const handlePrintClose = (status) => {
-    setPrintData(false);
-    // Handle different statuses
+    setPrintData(false)
     switch (status) {
       case 'completed':
-        console.log('Print dialog was closed (user either printed or cancelled)');
-        break;
+        console.log('Print dialog was closed (user either printed or cancelled)')
+        break
       case 'cancelled':
-        console.log('Print was cancelled before dialog opened');
-        break;
+        console.log('Print was cancelled before dialog opened')
+        break
       case 'error':
-        console.log('Print encountered an error');
-        break;
+        console.log('Print encountered an error')
+        break
       default:
-        console.log('Unknown status:', status);
+        console.log('Unknown status:', status)
     }
-    setTimeout(() => navigate("/cheque"))
-  };
+    setTimeout(() => navigate('/cheque'))
+  }
 
   if (printData) {
-    return <ChequePrint data={chequeData} onClose={handlePrintClose} />;
+    return <ChequePrint data={chequeData} onClose={handlePrintClose} />
   }
 
   return (
@@ -406,7 +380,6 @@ const ChequeList = () => {
         </CCardHeader>
 
         <CCardBody>
-          {/* FILTERS */}
           <div className="row mb-3 g-2">
             <div className="col-md-2">
               <CFormInput
@@ -417,10 +390,7 @@ const ChequeList = () => {
                   borderColor: 'var(--cui-primary)',
                   boxShadow: 'none',
                 }}
-                onFocus={(e) =>
-                  (e.target.style.boxShadow =
-                    '0 0 0 0.2rem rgba(13,110,253,.25)')
-                }
+                onFocus={(e) => (e.target.style.boxShadow = '0 0 0 0.2rem rgba(13,110,253,.25)')}
                 onBlur={(e) => (e.target.style.boxShadow = 'none')}
               />
             </div>
@@ -431,10 +401,7 @@ const ChequeList = () => {
                 value={supplierFilter}
                 onChange={(e) => setSupplierFilter(e.target.value)}
                 style={{ borderColor: 'var(--cui-primary)' }}
-                onFocus={(e) =>
-                  (e.target.style.boxShadow =
-                    '0 0 0 0.2rem rgba(13,110,253,.25)')
-                }
+                onFocus={(e) => (e.target.style.boxShadow = '0 0 0 0.2rem rgba(13,110,253,.25)')}
                 onBlur={(e) => (e.target.style.boxShadow = 'none')}
               />
             </div>
@@ -445,10 +412,7 @@ const ChequeList = () => {
                 value={invoiceFilter}
                 onChange={(e) => setInvoiceFilter(e.target.value)}
                 style={{ borderColor: 'var(--cui-primary)' }}
-                onFocus={(e) =>
-                  (e.target.style.boxShadow =
-                    '0 0 0 0.2rem rgba(13,110,253,.25)')
-                }
+                onFocus={(e) => (e.target.style.boxShadow = '0 0 0 0.2rem rgba(13,110,253,.25)')}
                 onBlur={(e) => (e.target.style.boxShadow = 'none')}
               />
             </div>
@@ -459,10 +423,7 @@ const ChequeList = () => {
                 value={dueDateFilter}
                 onChange={(e) => setDueDateFilter(e.target.value)}
                 style={{ borderColor: 'var(--cui-primary)' }}
-                onFocus={(e) =>
-                  (e.target.style.boxShadow =
-                    '0 0 0 0.2rem rgba(13,110,253,.25)')
-                }
+                onFocus={(e) => (e.target.style.boxShadow = '0 0 0 0.2rem rgba(13,110,253,.25)')}
                 onBlur={(e) => (e.target.style.boxShadow = 'none')}
               />
             </div>
@@ -472,10 +433,7 @@ const ChequeList = () => {
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
                 style={{ borderColor: 'var(--cui-primary)' }}
-                onFocus={(e) =>
-                  (e.target.style.boxShadow =
-                    '0 0 0 0.2rem rgba(13,110,253,.25)')
-                }
+                onFocus={(e) => (e.target.style.boxShadow = '0 0 0 0.2rem rgba(13,110,253,.25)')}
                 onBlur={(e) => (e.target.style.boxShadow = 'none')}
               >
                 <option value="">All Status</option>
@@ -486,7 +444,6 @@ const ChequeList = () => {
             </div>
           </div>
 
-          {/* TABLE */}
           {loading ? (
             <div className="text-center py-5">
               <CSpinner />
@@ -504,11 +461,12 @@ const ChequeList = () => {
                   </CTableHeaderCell>
                   <CTableHeaderCell>Cheque No</CTableHeaderCell>
                   <CTableHeaderCell>Supplier</CTableHeaderCell>
-                  <CTableHeaderCell>Invoice No</CTableHeaderCell>
-                  <CTableHeaderCell>Invoice Date</CTableHeaderCell>
+                  <CTableHeaderCell>Invoice</CTableHeaderCell>
+
                   <CTableHeaderCell>Amount (LKR)</CTableHeaderCell>
                   <CTableHeaderCell>Cheque Date</CTableHeaderCell>
                   <CTableHeaderCell>Due Date</CTableHeaderCell>
+                  <CTableHeaderCell>Cheque Type </CTableHeaderCell>
                   <CTableHeaderCell>Overdue?</CTableHeaderCell>
                   <CTableHeaderCell>Status</CTableHeaderCell>
                   <CTableHeaderCell className="text-center">Actions</CTableHeaderCell>
@@ -531,10 +489,14 @@ const ChequeList = () => {
                       <CTableDataCell>{p.chequeNo}</CTableDataCell>
                       <CTableDataCell>{p.payeeName}</CTableDataCell>
 
-                      {/* ✅ RESPONSIVE INVOICE CELL WITH MODAL BUTTON */}
                       <CTableDataCell>
                         <div className="d-flex flex-row align-items-center gap-2">
-                          <span className="text-truncate d-none d-sm-inline" style={{ maxWidth: '150px' }}>{p.invoiceNo || ''}</span>
+                          <span
+                            className="text-truncate d-none d-sm-inline"
+                            style={{ maxWidth: '150px' }}
+                          >
+                            {p.invoiceNo || ''}
+                          </span>
 
                           {invoiceCount > 0 && (
                             <CButton
@@ -543,9 +505,17 @@ const ChequeList = () => {
                               onClick={() => openInvoiceModal(p)}
                               title="View multiple invoices"
                               className="d-flex align-items-center justify-content-center px-2 py-1"
-                              style={{ fontSize: '0.75rem', minWidth: '85px', width: 'fit-content' }}
+                              style={{
+                                fontSize: '0.75rem',
+                                minWidth: '85px',
+                                width: 'fit-content',
+                              }}
                             >
-                              <CIcon icon={cilList} className="me-1 text-white" style={{ width: '14px', height: '14px' }} />
+                              <CIcon
+                                icon={cilList}
+                                className="me-1 text-white"
+                                style={{ width: '14px', height: '14px' }}
+                              />
                               <span>View ({invoiceCount})</span>
                             </CButton>
                           )}
@@ -553,11 +523,7 @@ const ChequeList = () => {
                       </CTableDataCell>
 
                       <CTableDataCell>
-                        {p.invoiceDate ? new Date(p.invoiceDate).toLocaleDateString() : ''}
-                      </CTableDataCell>
-
-                      <CTableDataCell>
-                        {Number(p.chequeAmount).toLocaleString("en-US", {
+                        {Number(p.chequeAmount).toLocaleString('en-US', {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}
@@ -569,9 +535,13 @@ const ChequeList = () => {
                       <CTableDataCell>
                         {p.dueDate ? new Date(p.dueDate).toLocaleDateString() : ''}
                       </CTableDataCell>
-
+                      <CTableDataCell>{p.receiptNo || ''}</CTableDataCell>
                       <CTableDataCell>
-                        {p.isOverdue ? <CBadge color="danger">Yes</CBadge> : <CBadge color="success">No</CBadge>}
+                        {p.isOverdue ? (
+                          <CBadge color="danger">Yes</CBadge>
+                        ) : (
+                          <CBadge color="success">No</CBadge>
+                        )}
                       </CTableDataCell>
 
                       <CTableDataCell>
@@ -586,7 +556,6 @@ const ChequeList = () => {
                         </CFormSelect>
                       </CTableDataCell>
 
-                      {/* ✅ RESPONSIVE ACTION BUTTONS */}
                       <CTableDataCell className="text-center">
                         <div className="d-flex flex-column flex-sm-row justify-content-center gap-2">
                           <CButton
@@ -664,8 +633,89 @@ const ChequeList = () => {
         </CCardBody>
       </CCard>
 
-      {/* ✅ NEW: CASH CHEQUE CONFIRMATION MODAL */}
-      
+      <CModal
+        visible={cashChequeModal}
+        onClose={() => setCashChequeModal(false)}
+        alignment="center"
+        backdrop="static"
+      >
+        <CModalBody className="text-center p-5 position-relative">
+          <CButton
+            color="light"
+            variant="ghost"
+            className="position-absolute top-0 end-0 m-3"
+            onClick={() => setCashChequeModal(false)}
+            style={{
+              width: '32px',
+              height: '32px',
+              padding: '0',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: 'none',
+            }}
+          >
+            <CIcon icon={cilX} size="lg" />
+          </CButton>
+
+          <div
+            className="d-inline-flex align-items-center justify-content-center rounded-circle mb-4"
+            style={{
+              width: '80px',
+              height: '80px',
+              backgroundColor: '#6c5ce7',
+              boxShadow: '0 10px 25px rgba(108, 92, 231, 0.25)',
+            }}
+          >
+            <CIcon icon={cilPrint} size="xl" className="text-white" />
+          </div>
+
+          <h4 className="fw-bold mb-3" style={{ color: 'var(--cui-body-color, #2d3748)' }}>
+            Cash Cheque Confirmation
+          </h4>
+
+          <p
+            className="mb-4"
+            style={{ fontSize: '1rem', color: 'var(--cui-secondary-color, #64748b)' }}
+          >
+            Is this a cash cheque?
+          </p>
+
+          <div className="d-flex gap-3 justify-content-center">
+            <CButton
+              color="light"
+              onClick={() => handleCashChequeConfirm(false)}
+              className="px-4 py-2 fw-semibold"
+              style={{
+                minWidth: '120px',
+                border: '2px solid #e2e8f0',
+                color: '#4a5568',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+              }}
+            >
+              <CIcon icon={cilXCircle} className="me-2" />
+              No
+            </CButton>
+
+            <CButton
+              onClick={() => handleCashChequeConfirm(true)}
+              className="px-4 py-2 fw-semibold text-white"
+              style={{
+                minWidth: '120px',
+                backgroundColor: '#6c5ce7',
+                border: 'none',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 12px rgba(108, 92, 231, 0.3)',
+              }}
+            >
+              <CIcon icon={cilCheckCircle} className="me-2" />
+              Yes
+            </CButton>
+          </div>
+        </CModalBody>
+      </CModal>
 
       {/* BULK MODAL */}
       <CModal visible={bulkModal} onClose={() => setBulkModal(false)} size="lg">
@@ -726,7 +776,11 @@ const ChequeList = () => {
           <CButton color="secondary" onClick={() => setBulkModal(false)} disabled={bulkLoading}>
             Cancel
           </CButton>
-          <CButton color="warning" onClick={bulkIssueAll} disabled={bulkLoading || !selectedCheques.length}>
+          <CButton
+            color="warning"
+            onClick={bulkIssueAll}
+            disabled={bulkLoading || !selectedCheques.length}
+          >
             {bulkLoading ? <CSpinner size="sm" /> : 'Issue (OK)'}
           </CButton>
         </CModalFooter>
@@ -738,33 +792,45 @@ const ChequeList = () => {
         size="lg"
         alignment="center"
       >
-        <CModalHeader closeButton={false} className="py-3 border-bottom">
+        <CModalHeader
+          closeButton={false}
+          className="py-3"
+          style={{ borderBottom: '1px solid #3c4b64' }}
+        >
           <div className="d-flex justify-content-between align-items-center w-100">
             <div>
-              <CModalTitle className="fw-semibold fs-5 mb-1">
-                Invoice Details
-              </CModalTitle>
+              <CModalTitle className="fw-semibold fs-5 mb-1">Invoice Details</CModalTitle>
+
               <div className="text-muted small">
-                Cheque #{invoiceModalCheque?.chequeNo || 'N/A'}
+                <span className="fw-medium">Cheque No:</span>{' '}
+                {invoiceModalCheque?.chequeNo || 'N/A'}
+              </div>
+
+              <div className="text-muted small">
+                <span className="fw-medium">Invoice Date:</span>{' '}
+                {invoiceModalCheque?.invoiceDate
+                  ? new Date(invoiceModalCheque.invoiceDate).toLocaleDateString('en-GB')
+                  : 'N/A'}
               </div>
             </div>
 
             <div className="text-end">
               <div
-                className="text-muted text-uppercase fw-medium mb-1"
-                style={{ fontSize: '0.7rem', letterSpacing: '0.5px' }}
+                className="text-muted text-uppercase fw-semibold mb-1"
+                style={{ fontSize: '0.7rem', letterSpacing: '0.6px' }}
               >
                 Total Amount
               </div>
-              <span
+
+              <div
                 className="fw-bold text-primary"
-                style={{ fontSize: '1.5rem', letterSpacing: '-0.5px' }}
+                style={{ fontSize: '1.6rem', letterSpacing: '-0.5px' }}
               >
                 {invoiceModalTotal.toLocaleString('en-US', {
                   style: 'currency',
                   currency: 'LKR',
                 })}
-              </span>
+              </div>
             </div>
           </div>
         </CModalHeader>
@@ -783,12 +849,8 @@ const ChequeList = () => {
                   <CTableHeaderCell style={{ width: 50 }} className="text-center fw-semibold">
                     #
                   </CTableHeaderCell>
-                  <CTableHeaderCell className="fw-semibold">
-                    Invoice Number
-                  </CTableHeaderCell>
-                  <CTableHeaderCell className="fw-semibold">
-                    Amount (LKR)
-                  </CTableHeaderCell>
+                  <CTableHeaderCell className="fw-semibold">Invoice Number</CTableHeaderCell>
+                  <CTableHeaderCell className="fw-semibold">Amount (LKR)</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
 
@@ -807,7 +869,6 @@ const ChequeList = () => {
                         {idx + 1}
                       </CTableDataCell>
 
-                      {/* Invoice Number */}
                       <CTableDataCell>
                         <CFormInput
                           size="sm"
@@ -817,7 +878,6 @@ const ChequeList = () => {
                         />
                       </CTableDataCell>
 
-                      {/* Amount (LEFT aligned as requested) */}
                       <CTableDataCell>
                         <CFormInput
                           type="number"
@@ -848,27 +908,32 @@ const ChequeList = () => {
         </CModalFooter>
       </CModal>
 
-      {/* DELETE MODAL */}
-         <CModal visible={deleteModal} onClose={() => setDeleteModal(false)} alignment="center" backdrop="static">
+      <CModal
+        visible={deleteModal}
+        onClose={() => setDeleteModal(false)}
+        alignment="center"
+        backdrop="static"
+      >
         <CModalBody className="text-center p-5">
-          <div 
+          <div
             className="d-inline-flex align-items-center justify-content-center rounded-circle mb-4"
             style={{
               width: '80px',
               height: '80px',
               backgroundColor: '#ef4444',
-              boxShadow: '0 10px 25px rgba(239, 68, 68, 0.25)'
+              boxShadow: '0 10px 25px rgba(239, 68, 68, 0.25)',
             }}
           >
             <CIcon icon={cilTrash} size="xl" className="text-white" />
           </div>
-          
+
           <h4 className="fw-bold mb-3" style={{ color: '#2d3748' }}>
             Delete Cheque
           </h4>
-          
+
           <p className="text-muted mb-4" style={{ fontSize: '1rem' }}>
-            Are you sure you want to delete cheque <strong className="text-dark">{selectedPayment?.chequeNo}</strong>?
+            Are you sure you want to delete cheque{' '}
+            <strong className="text-dark">{selectedPayment?.chequeNo}</strong>?
           </p>
 
           <div className="d-flex gap-3 justify-content-center">
@@ -881,22 +946,12 @@ const ChequeList = () => {
                 border: '2px solid #e2e8f0',
                 color: '#4a5568',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.borderColor = '#cbd5e0'
-                e.target.style.transform = 'translateY(-2px)'
-                e.target.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)'
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.borderColor = '#e2e8f0'
-                e.target.style.transform = 'translateY(0)'
-                e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)'
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
               }}
             >
               Cancel
             </CButton>
-            
+
             <CButton
               onClick={confirmDelete}
               className="px-4 py-2 fw-semibold text-white"
@@ -905,17 +960,7 @@ const ChequeList = () => {
                 backgroundColor: '#ef4444',
                 border: 'none',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#dc2626'
-                e.target.style.transform = 'translateY(-2px)'
-                e.target.style.boxShadow = '0 6px 16px rgba(239, 68, 68, 0.4)'
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#ef4444'
-                e.target.style.transform = 'translateY(0)'
-                e.target.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.3)'
+                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
               }}
             >
               <CIcon icon={cilTrash} className="me-2" />
