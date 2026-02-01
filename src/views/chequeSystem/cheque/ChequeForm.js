@@ -161,6 +161,7 @@ const ChequeForm = () => {
     const res = await vendorService.getAllVendors()
     const suppliersData = Array.isArray(res) ? res : res?.data || []
     setSuppliers(suppliersData)
+    return res;
   }
 
   const fetchAccounts = async () => {
