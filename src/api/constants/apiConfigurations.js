@@ -33,6 +33,9 @@ export const API_CONFIGURATIONS = {
         CHEQUE_BY_ID: (id) => `/Cheques/${id}`,
         CHEQUE_STATUS: (id) => `/Cheques/${id}/status`,
           CHEQUE_STATUS_BULK: `/Cheques/status/bulk`,
+         CHEQUE_SUMERY: (bankAccountId, startDate, endDate) =>
+  `/Cheques/summary/bank-account/time/${bankAccountId}?startDate=${startDate}&endDate=${endDate}`,
+
 
 
         LOGIN_USER: `${BASE_URL}/login`,

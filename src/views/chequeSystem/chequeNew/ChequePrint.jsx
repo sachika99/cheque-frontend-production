@@ -151,6 +151,13 @@ function ChequePrint({ data, onClose }) {
   const amountInWords = data.amount ? `${numberToWords(data.amount.split('.')[0])} Only` : '';
 const amountFormatted = Number(data?.amount ?? 0).toFixed(2);
 
+const estimatedCharsPerLine = 38;
+  const estimatedLines = Math.ceil(amountInWords.length / estimatedCharsPerLine);
+  const isThreeOrMoreLines = estimatedLines >= 3;
+  const adjustedAmountWordsBottom = isThreeOrMoreLines 
+    ? fieldPositions.amountWordsBottom - 4
+    : fieldPositions.amountWordsBottom;
+
 return (
     <div className="cheque-print-wrapper cheque-hidden-preview">
       {/* Printable cheque */}
@@ -161,7 +168,7 @@ return (
             style={{
               position: 'absolute',
               width: '180mm',
-              height: '80mm',
+              height: '180mm',
               left: `${chequePosition.left}mm`,
               bottom: `${chequePosition.bottom}mm`,
               transform: `rotate(${chequePosition.rotation}deg)`,
@@ -254,21 +261,22 @@ return (
               style={{
                 position: 'absolute',
                 left: `${fieldPositions.amountWordsLeft}mm`,
-                bottom: `${fieldPositions.amountWordsBottom}mm`,
+                bottom: `${adjustedAmountWordsBottom}mm`,
                 fontFamily: 'OCR-BczykNorm, monospace',
                 fontSize: '18px',
                 fontWeight: 'normal',
                 color: 'black',
                 maxWidth: `${fieldPositions.amountWordsWidth}mm`,
                 lineHeight: '1.7',
-                minHeight: '20mm'
+                minHeight: '20mm',
+                overflow: 'visible' 
               }}
             >
-              **
+             
               <span style={{ display: 'inline-block', maxWidth: '95mm', whiteSpace: 'normal', wordBreak: 'break-word' }}>
-                {amountInWords}
+                 **{amountInWords}**
               </span>
-              **
+              
             </div>
 
             {/* Rupees Symbol Box */}

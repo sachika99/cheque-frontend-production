@@ -62,15 +62,22 @@ class BankAccountServices {
     }
   }
 
-  async deleteBankAccount(id) {
-    try {
-    
-      await axiosInstance.delete(API_CONFIGURATIONS.ENDPOINTS.BANKACCOUNT_BY_ID(id))
-      return true
-    } catch (error) {
-      return error
+ async deleteBankAccount(id) {
+  try {
+    const response = await axiosInstance.delete(
+      API_CONFIGURATIONS.ENDPOINTS.BANKACCOUNT_BY_ID(id)
+    );
+
+    if (response.status === 204) {
+      return true;
     }
+
+    return false;
+  } catch (error) {
+    return false;
   }
+}
+
   async createBankAndAccount(BankAccountData) {
     try {
       const response = await axiosInstance.post(

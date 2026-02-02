@@ -78,11 +78,15 @@ const BankAccountList = () => {
   const confirmDelete = async () => {
     if (!selectedAccount) return
     try {
-      await BankAccountService.deleteBankAccount(selectedAccount.id)
+      debugger
+      var respones = await bankAccountServices.deleteBankAccount(selectedAccount.id)
+      if(respones){
       setAccounts((prev) => prev.filter((x) => x.id !== selectedAccount.id))
       toast.success('Bank Account Deleted')
       setDeleteModal(false)
       setSelectedAccount(null)
+    }else{
+      toast.error('Bank Account Not Deleted')}
     } catch (error) {
       toast.error(error.message)
     }

@@ -47,6 +47,7 @@ const BankForm = () => {
     accountNo: '',
     accountName: '',
     accountType: '',
+    branchName:formData.branchName,
     balance: 0,
     status: 'Active',
   })
@@ -149,7 +150,7 @@ const BankForm = () => {
     setAccountForm({
       accountNo: '',
       accountName: '',
-      accountType: '',
+      accountType: 'Current',
       balance: 0,
       status: 'Active',
     })

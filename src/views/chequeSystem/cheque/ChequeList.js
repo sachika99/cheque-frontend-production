@@ -276,7 +276,9 @@ const ChequeList = () => {
 
   const confirmDelete = async () => {
     try {
-      await chequeServices.deleteCheque(selectedPayment.chequeId)
+      debugger
+      await chequeServices.deleteCheque(selectedPayment.id)
+      debugger
       setPayments((p) => p.filter((x) => x.chequeId !== selectedPayment.chequeId))
       toast.success('Cheque deleted')
       setDeleteModal(false)

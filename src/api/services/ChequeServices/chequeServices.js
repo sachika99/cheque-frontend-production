@@ -103,7 +103,17 @@ async updateChequeStatusBulk(chequeIds, newStatus, user) {
   async deleteCheque(id) {
     try {
       await axiosInstance.delete(API_CONFIGURATIONS.ENDPOINTS.CHEQUE_BY_ID(id))
+      debugger
       return true
+    } catch (error) {
+      throw this.handleError(error)
+    }
+  }
+
+  async fetchSumeryCheque(selectedBankAccount,startDate,endDate) {
+    try {
+      var REPOSNE =await axiosInstance.get(API_CONFIGURATIONS.ENDPOINTS.CHEQUE_SUMERY(selectedBankAccount,startDate,endDate))
+      return REPOSNE;
     } catch (error) {
       throw this.handleError(error)
     }
