@@ -43,8 +43,7 @@ const ChequeStatusSummary = () => {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [dateFilterEnabled, setDateFilterEnabled] = useState(false)
-  const [animationPhase, setAnimationPhase] = useState('idle') // idle, forward, reverse
-//   const [selectedStatus, setSelectedStatus] = useState('All') // Filter by status
+  const [animationPhase, setAnimationPhase] = useState('idle')
   const [selectedStatus, setSelectedStatus] = useState('Pending')
 
   useEffect(() => {
@@ -68,22 +67,7 @@ const fetchCheques = async (selectedBankAccount, startDate,endDate) => {
 
     setLoading(true)
     try {
-      //   let url = `/api/Cheques/summary/bank-account/${selectedBankAccount}`
-      //   const params = new URLSearchParams()
-      
-      //   if (dateFilterEnabled && startDate) {
-      //     params.append('startDate', startDate)
-      //   }
-      //   if (dateFilterEnabled && endDate) {
-      //     params.append('endDate', endDate)
-      //   }
-      
-      //   if (params.toString()) {
-      //     url += '?' + params.toString()
-      //   }
-
-        const res = await fetchCheques(selectedBankAccount, startDate,endDate)
-        console.log(res)
+      const res = await fetchCheques(selectedBankAccount, startDate,endDate)
       setSummaryData(res.data)
     } catch (error) {
       console.error('Error loading summary data:', error)
@@ -101,18 +85,15 @@ const fetchCheques = async (selectedBankAccount, startDate,endDate) => {
 
   useEffect(() => {
     if (summaryData.length > 0) {
-      // Start animation sequence
       setAnimationPhase('idle')
       
-      // Phase 1: Go forward (full circle)
       setTimeout(() => {
         setAnimationPhase('forward')
       }, 100)
       
-      // Phase 2: Reverse back to actual position
       setTimeout(() => {
         setAnimationPhase('reverse')
-      }, 1600) // 100ms delay + 1500ms forward animation
+      }, 1600)
     }
   }, [summaryData])
 
@@ -133,7 +114,6 @@ const fetchCheques = async (selectedBankAccount, startDate,endDate) => {
     }
   }
 
-  /* ================= COMPUTED VALUES ================= */
   const filteredSummaryData = useMemo(
     () => selectedStatus === 'All'
       ? summaryData
@@ -156,7 +136,6 @@ const fetchCheques = async (selectedBankAccount, startDate,endDate) => {
     [totalAmount, totalCheques]
   )
 
-  /* ================= CHART DATA ================= */
   const pieChartData = useMemo(
     () =>
       filteredSummaryData.map((item) => ({
@@ -175,12 +154,11 @@ const fetchCheques = async (selectedBankAccount, startDate,endDate) => {
     [filteredSummaryData]
   )
 
-  /* ================= COLORS ================= */
   const STATUS_COLORS = {
-    Pending: '#FFA726', // Orange
-    Issued: '#42A5F5', // Blue
-    Cleared: '#66BB6A', // Green
-    Cancelled: '#EF5350', // Red
+    Pending: '#FFA726',
+    Issued: '#42A5F5',
+    Cleared: '#66BB6A',
+    Cancelled: '#EF5350',
   }
 
   const STATUS_BADGE_COLORS = {
@@ -193,7 +171,6 @@ const fetchCheques = async (selectedBankAccount, startDate,endDate) => {
   const getStatusColor = (status) => STATUS_COLORS[status] || '#6b7280'
   const getBadgeColor = (status) => STATUS_BADGE_COLORS[status] || 'secondary'
 
-  /* ================= FORMAT HELPERS ================= */
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-LK', {
       style: 'currency',
@@ -206,10 +183,8 @@ const fetchCheques = async (selectedBankAccount, startDate,endDate) => {
     return new Intl.NumberFormat('en-US').format(num)
   }
 
-  /* ================= UI ================= */
   return (
     <>
-      {/* ===== FILTERS ===== */}
       <CRow className="mb-4">
         <CCol>
           <CCard>

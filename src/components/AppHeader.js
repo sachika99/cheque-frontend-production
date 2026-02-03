@@ -43,18 +43,19 @@ const AppHeader = () => {
     return 'Good Evening ' + username
   }
 
-  const quotes = [
-    "Success is not final, failure is not fatal: it is the courage to continue that counts.",
-    "The only way to do great work is to love what you do.",
-    "Believe you can and you're halfway there.",
-    "Quality is not an act, it is a habit.",
-    "Excellence is not a skill, it is an attitude.",
-    "The secret of getting ahead is getting started.",
-    "Success doesn't come from what you do occasionally, it comes from what you do consistently.",
-    "The future belongs to those who believe in the beauty of their dreams.",
-    "Strive not to be a success, but rather to be of value.",
-    "Innovation distinguishes between a leader and a follower."
-  ]
+const spiderManQuotes = [
+  "With great power comes great responsibility.",
+  "Anyone can wear the mask.",
+  "It’s a leap of faith.",
+  "Being a hero means getting back up.",
+  "You don’t have to be perfect to do good.",
+  "Sometimes the right choice is the hardest one.",
+  "Every hero starts by believing.",
+  "You help one person at a time.",
+  "Courage is choosing to stand up again.",
+  "Do the right thing, even when it hurts."
+];
+
 
   const isGreeting = (message) => {
     return message.startsWith('Good Morning') || 
